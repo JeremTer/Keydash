@@ -11,10 +11,10 @@ export const Settings: React.FC<SettingsProps> = ({
   onSettingsChange,
   disabled = false,
 }) => {
-  const handleLanguageToggle = () => {
+  const handleLanguageChange = (language: 'en' | 'fr') => {
     onSettingsChange({
       ...settings,
-      language: settings.language === 'en' ? 'fr' : 'en',
+      language,
     });
   };
 
@@ -63,18 +63,35 @@ export const Settings: React.FC<SettingsProps> = ({
         {settings.language === 'en' ? 'Settings' : 'Paramètres'}
       </h2>
 
-      {/* Language Toggle */}
-      <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+      {/* Language Selection */}
+      <div>
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block mb-2">
           {settings.language === 'en' ? 'Language' : 'Langue'}
         </label>
-        <button
-          onClick={handleLanguageToggle}
-          disabled={disabled}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {settings.language === 'en' ? 'English 🇬🇧' : 'Français 🇫🇷'}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => handleLanguageChange('en')}
+            disabled={disabled}
+            className={`flex-1 px-4 py-2 rounded-lg transition-colors ${
+              settings.language === 'en'
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            English 🇬🇧
+          </button>
+          <button
+            onClick={() => handleLanguageChange('fr')}
+            disabled={disabled}
+            className={`flex-1 px-4 py-2 rounded-lg transition-colors ${
+              settings.language === 'fr'
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            Français 🇫🇷
+          </button>
+        </div>
       </div>
 
       {/* Practice Mode */}
