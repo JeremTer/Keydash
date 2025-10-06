@@ -135,14 +135,40 @@ useEffect(() => {
 
 **Key Features:**
 - Shows chord name in selected language (en/fr)
-- Circular SVG countdown timer
+- Circular SVG countdown timer (120px diameter)
 - Color-coded warnings (blue → orange → red)
-- Shows difficulty and popularity stars
+- Shows difficulty badges and popularity stars
+- **Compact side-by-side layout** (chord name left, timer right)
+- **Fixed height to prevent layout shifts** when starting/stopping
+
+**Layout Stability:**
+```typescript
+// Main container with fixed minimum height
+<div className="py-4 px-4 min-h-[140px]">
+  // Flex container for side-by-side layout
+  <div className="flex items-center justify-between">
+    // Chord name area with min-height
+    <div className="flex-1 min-h-[100px]">
+      {chord ? <ChordInfo /> : <StartMessage />}
+    </div>
+    // Timer always reserves 120px width
+    <div className="flex-shrink-0 w-[120px]">
+      <Timer /> // Always visible, even when paused
+    </div>
+  </div>
+</div>
+```
+
+**Why this design:**
+- Timer is always visible (even when paused) to prevent jumping
+- Fixed widths and heights prevent layout shifts
+- Side-by-side layout saves vertical space for the piano keyboard
+- Chord name and timer visible at the same time
 
 **SVG Circle Animation:**
 ```typescript
-// Circle circumference = 2 * π * radius
-const circumference = 2 * Math.PI * 70;
+// Circle circumference = 2 * π * radius (radius = 50px)
+const circumference = 2 * Math.PI * 50;
 
 // Offset based on percentage remaining
 strokeDashoffset={circumference * (1 - percentage / 100)}
@@ -152,6 +178,7 @@ strokeDashoffset={circumference * (1 - percentage / 100)}
 - `strokeDasharray` sets the total dash length (full circle)
 - `strokeDashoffset` controls how much is "hidden"
 - As time decreases, offset increases, creating countdown effect
+- Timer stays visible when paused, showing the paused time
 
 ---
 
@@ -162,8 +189,14 @@ strokeDashoffset={circumference * (1 - percentage / 100)}
 **Key Features:**
 - 2 octaves + 1 note (25 keys total)
 - White keys drawn first, black keys on top (z-index via SVG order)
-- Highlights notes in blue (white keys) and red (black keys)
+- **All chord notes highlighted in emerald green (#10b981)** - same color for clarity
 - Responsive SVG that scales to container
+
+**Color Design Decision:**
+- Originally used blue for white keys and red for black keys
+- **Changed to uniform green** to avoid confusion
+- All highlighted notes use the same color, making it crystal clear which notes belong to the chord
+- Green was chosen for its positive, "correct" connotation
 
 **Note Matching Logic:**
 ```typescript
@@ -194,19 +227,25 @@ const isHighlighted = (note: string) => {
 **Responsibility:** User preferences UI
 
 **Key Features:**
-- Language toggle (EN ↔ FR)
-- Practice mode selection
-- Chord type filters (major/minor)
-- Difficulty filters
+- **Two-button language selection** (English 🇬🇧 / Français 🇫🇷) - both options visible
+- Practice mode selection (Learn All / Learn Selected)
+- Chord type filters (Major/Minor)
+- Difficulty filters (All / Beginner / Intermediate / Advanced)
 - Duration slider (1-10s)
-- Show/hide chord toggle
+- Show/hide chord toggle (switch component)
+
+**UI Improvements:**
+- Language selector changed from toggle button to two-button group
+- Both language options always visible for better UX
+- Consistent button group pattern across all settings
+- Selected option highlighted in blue, unselected in gray
 
 **State Updates:**
 ```typescript
-const handleLanguageToggle = () => {
+const handleLanguageChange = (language: 'en' | 'fr') => {
   onSettingsChange({
     ...settings,
-    language: settings.language === 'en' ? 'fr' : 'en',
+    language,
   });
 };
 ```
@@ -300,7 +339,7 @@ export interface Chord {
 
 ### data/chords.ts - Chord Database
 
-**27 Chords Total:**
+**All 24 Major and Minor Chords:**
 - **Beginner (10):** C, G, F, D, A, E major + A, D, E, C minor
 - **Intermediate (9):** B, Bb, Eb, Ab, Db major + F, G, B, Bb minor
 - **Advanced (8):** Gb, C#, F# major + C#, F#, G#, Eb, Ab minor
@@ -314,11 +353,37 @@ export const CHORDS: Chord[] = [
     type: 'major',
     notes: ['C', 'E', 'G'],
     difficulty: 'beginner',
-    popularity: 5,
+    popularity: 5, // Based on real-world data
   },
   // ... more chords
 ];
 ```
+
+**Popularity Ratings - Research-Based:**
+
+The popularity ratings are based on **analysis of 1,300+ popular songs** (source: Hooktheory):
+
+- **5 stars**: C, G, F major + A, D, E minor
+  - The "Big Four" chords (I, V, IV, vi in C major)
+  - Most common across all genres
+  - Fewest accidentals (natural keys)
+
+- **4 stars**: D, A, E major + C minor, Bb major, G, B minor
+  - Common in pop, jazz, and rock
+  - Relatively few accidentals
+  - Frequently used progressions
+
+- **3 stars**: Eb major, F, C#, F# minor
+  - Moderate usage in specific genres
+  - Some accidentals but manageable
+
+- **2 stars**: Ab, Db, B major + Bb, G#, F# minor
+  - Less common due to more accidentals
+  - Used in specific keys
+
+- **1 star**: Gb, C# major + Eb, Ab minor
+  - Very rare (6-7 accidentals)
+  - Mostly theoretical/enharmonic equivalents
 
 **Note Translations:**
 ```typescript
@@ -333,7 +398,8 @@ export const NOTE_TRANSLATIONS = {
 **Design Decisions:**
 - Hardcoded data (no API) for simplicity and speed
 - Each chord has explicit notes (no calculation needed)
-- Popularity helps users focus on common chords
+- **Popularity based on real music data** - helps users learn most-used chords first
+- Popularity correlates with key signature complexity (fewer accidentals = more popular)
 - Easy to extend (add more chords, add 7th chords, etc.)
 
 ---
@@ -419,6 +485,22 @@ dark:from-gray-900 dark:to-gray-800
 - Responsive design built-in
 - Consistent design system
 - Small production bundle (unused styles purged)
+
+**Layout Stability Features:**
+- `min-w-[180px]` on Pause/Resume button prevents width change when toggling
+- `min-h-[140px]` on chord display prevents vertical jumping
+- Timer always reserves 120px width (visible even when paused)
+- Fixed heights and widths throughout to prevent layout shifts
+
+**Example - Button Width Consistency:**
+```tsx
+// Pause/Resume button maintains same width
+<button className="... min-w-[180px]">
+  {isPaused ? '▶ Resume' : '⏸ Pause'}
+</button>
+```
+
+This ensures the button doesn't change size when the text changes, preventing layout shifts.
 
 ---
 

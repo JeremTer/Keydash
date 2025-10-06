@@ -81,7 +81,7 @@ export const PianoKeyboard: React.FC<PianoKeyboardProps> = ({
                 y="0"
                 width={WHITE_KEY_WIDTH}
                 height={WHITE_KEY_HEIGHT}
-                fill={highlighted ? '#60a5fa' : 'white'}
+                fill={highlighted ? '#10b981' : 'white'}
                 stroke="#333"
                 strokeWidth="2"
                 rx="3"
@@ -91,7 +91,7 @@ export const PianoKeyboard: React.FC<PianoKeyboardProps> = ({
                   cx={key.x + WHITE_KEY_WIDTH / 2}
                   cy={WHITE_KEY_HEIGHT - 30}
                   r="8"
-                  fill="#1e40af"
+                  fill="#065f46"
                 />
               )}
             </g>
@@ -108,7 +108,7 @@ export const PianoKeyboard: React.FC<PianoKeyboardProps> = ({
                 y="0"
                 width={BLACK_KEY_WIDTH}
                 height={BLACK_KEY_HEIGHT}
-                fill={highlighted ? '#ef4444' : '#1a1a1a'}
+                fill={highlighted ? '#10b981' : '#1a1a1a'}
                 stroke="#000"
                 strokeWidth="2"
                 rx="2"
@@ -118,7 +118,7 @@ export const PianoKeyboard: React.FC<PianoKeyboardProps> = ({
                   cx={key.x + BLACK_KEY_WIDTH / 2}
                   cy={BLACK_KEY_HEIGHT - 20}
                   r="6"
-                  fill="#fee"
+                  fill="#d1fae5"
                 />
               )}
             </g>

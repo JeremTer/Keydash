@@ -104,7 +104,7 @@ export const CHORDS: Chord[] = [
     type: 'major',
     notes: ['B', 'D#', 'F#'],
     difficulty: 'intermediate',
-    popularity: 3,
+    popularity: 2, // 5 sharps - less common
   },
   {
     id: 'Bb-major',
@@ -112,7 +112,7 @@ export const CHORDS: Chord[] = [
     type: 'major',
     notes: ['Bb', 'D', 'F'],
     difficulty: 'intermediate',
-    popularity: 4,
+    popularity: 4, // Very common in jazz and pop
   },
   {
     id: 'Eb-major',
@@ -120,7 +120,7 @@ export const CHORDS: Chord[] = [
     type: 'major',
     notes: ['Eb', 'G', 'Bb'],
     difficulty: 'intermediate',
-    popularity: 4,
+    popularity: 3, // Common in brass/wind music
   },
   {
     id: 'Ab-major',
@@ -128,7 +128,7 @@ export const CHORDS: Chord[] = [
     type: 'major',
     notes: ['Ab', 'C', 'Eb'],
     difficulty: 'intermediate',
-    popularity: 3,
+    popularity: 2, // 4 flats - moderate usage
   },
   {
     id: 'Db-major',
@@ -136,7 +136,7 @@ export const CHORDS: Chord[] = [
     type: 'major',
     notes: ['Db', 'F', 'Ab'],
     difficulty: 'intermediate',
-    popularity: 3,
+    popularity: 2, // 5 flats - less common
   },
 
   // INTERMEDIATE - MINOR CHORDS
@@ -146,7 +146,7 @@ export const CHORDS: Chord[] = [
     type: 'minor',
     notes: ['F', 'Ab', 'C'],
     difficulty: 'intermediate',
-    popularity: 4,
+    popularity: 3, // Relative to Ab major
   },
   {
     id: 'G-minor',
@@ -154,7 +154,7 @@ export const CHORDS: Chord[] = [
     type: 'minor',
     notes: ['G', 'Bb', 'D'],
     difficulty: 'intermediate',
-    popularity: 4,
+    popularity: 4, // Very common in pop/jazz
   },
   {
     id: 'B-minor',
@@ -162,7 +162,7 @@ export const CHORDS: Chord[] = [
     type: 'minor',
     notes: ['B', 'D', 'F#'],
     difficulty: 'intermediate',
-    popularity: 3,
+    popularity: 4, // Relative to D major, common
   },
   {
     id: 'Bb-minor',
@@ -170,7 +170,7 @@ export const CHORDS: Chord[] = [
     type: 'minor',
     notes: ['Bb', 'Db', 'F'],
     difficulty: 'intermediate',
-    popularity: 3,
+    popularity: 2, // Relative to Db major
   },
 
   // ADVANCED - MAJOR CHORDS
@@ -180,7 +180,7 @@ export const CHORDS: Chord[] = [
     type: 'major',
     notes: ['Gb', 'Bb', 'Db'],
     difficulty: 'advanced',
-    popularity: 2,
+    popularity: 1, // 6 flats - very rare
   },
   {
     id: 'C#-major',
@@ -188,7 +188,7 @@ export const CHORDS: Chord[] = [
     type: 'major',
     notes: ['C#', 'E#', 'G#'],
     difficulty: 'advanced',
-    popularity: 2,
+    popularity: 1, // 7 sharps - extremely rare
   },
   {
     id: 'F#-major',
@@ -196,7 +196,7 @@ export const CHORDS: Chord[] = [
     type: 'major',
     notes: ['F#', 'A#', 'C#'],
     difficulty: 'advanced',
-    popularity: 2,
+    popularity: 2, // 6 sharps - rare but more than C#
   },
 
   // ADVANCED - MINOR CHORDS
@@ -206,7 +206,7 @@ export const CHORDS: Chord[] = [
     type: 'minor',
     notes: ['C#', 'E', 'G#'],
     difficulty: 'advanced',
-    popularity: 3,
+    popularity: 3, // Relative to E major, occasionally used
   },
   {
     id: 'F#-minor',
@@ -214,7 +214,7 @@ export const CHORDS: Chord[] = [
     type: 'minor',
     notes: ['F#', 'A', 'C#'],
     difficulty: 'advanced',
-    popularity: 3,
+    popularity: 3, // Relative to A major, occasionally used
   },
   {
     id: 'G#-minor',
@@ -222,7 +222,7 @@ export const CHORDS: Chord[] = [
     type: 'minor',
     notes: ['G#', 'B', 'D#'],
     difficulty: 'advanced',
-    popularity: 2,
+    popularity: 2, // Relative to B major, rare
   },
   {
     id: 'Eb-minor',
@@ -230,7 +230,7 @@ export const CHORDS: Chord[] = [
     type: 'minor',
     notes: ['Eb', 'Gb', 'Bb'],
     difficulty: 'advanced',
-    popularity: 2,
+    popularity: 1, // 6 flats - very rare
   },
   {
     id: 'Ab-minor',
@@ -238,7 +238,7 @@ export const CHORDS: Chord[] = [
     type: 'minor',
     notes: ['Ab', 'Cb', 'Eb'],
     difficulty: 'advanced',
-    popularity: 2,
+    popularity: 1, // 7 flats - extremely rare
   },
 ];
 

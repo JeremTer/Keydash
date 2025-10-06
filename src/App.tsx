@@ -170,7 +170,6 @@ function App() {
                 timeRemaining={gameState.timeRemaining}
                 totalTime={settings.countdownDuration}
                 language={settings.language}
-                isPlaying={gameState.isPlaying && !gameState.isPaused}
               />
             </div>
 
@@ -195,7 +194,7 @@ function App() {
                 <>
                   <button
                     onClick={handlePause}
-                    className="px-8 py-4 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors text-xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="px-8 py-4 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors text-xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105 min-w-[180px]"
                   >
                     {gameState.isPaused
                       ? settings.language === 'en'
