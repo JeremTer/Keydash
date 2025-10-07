@@ -1,6 +1,6 @@
 import type { Chord } from '../types';
 import { CHORDS } from '../data/chords';
-import { getChordName, getChordsByDifficulty } from '../utils/chordUtils';
+import { getChordName } from '../utils/chordUtils';
 
 interface ChordSelectorProps {
   selectedChords: string[];
@@ -15,7 +15,12 @@ export const ChordSelector: React.FC<ChordSelectorProps> = ({
   language,
   onClose,
 }) => {
-  const chordsByDifficulty = getChordsByDifficulty();
+  // Sort chords alphabetically by their displayed name
+  const sortedChords = [...CHORDS].sort((a, b) => {
+    const nameA = getChordName(a, language);
+    const nameB = getChordName(b, language);
+    return nameA.localeCompare(nameB);
+  });
 
   const toggleChord = (chordId: string) => {
     if (selectedChords.includes(chordId)) {
@@ -31,12 +36,6 @@ export const ChordSelector: React.FC<ChordSelectorProps> = ({
 
   const deselectAll = () => {
     onSelectionChange([]);
-  };
-
-  const selectDifficulty = (difficulty: 'beginner' | 'intermediate' | 'advanced') => {
-    const diffChords = chordsByDifficulty[difficulty].map((c) => c.id);
-    const newSelection = [...new Set([...selectedChords, ...diffChords])];
-    onSelectionChange(newSelection);
   };
 
   const renderChordButton = (chord: Chord) => {
@@ -88,62 +87,12 @@ export const ChordSelector: React.FC<ChordSelectorProps> = ({
           >
             {language === 'en' ? 'Deselect All' : 'Tout désélectionner'}
           </button>
-          <div className="flex-1" />
-          <button
-            onClick={() => selectDifficulty('beginner')}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
-          >
-            {language === 'en' ? '+ Beginner' : '+ Débutant'}
-          </button>
-          <button
-            onClick={() => selectDifficulty('intermediate')}
-            className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm"
-          >
-            {language === 'en' ? '+ Intermediate' : '+ Intermédiaire'}
-          </button>
-          <button
-            onClick={() => selectDifficulty('advanced')}
-            className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm"
-          >
-            {language === 'en' ? '+ Advanced' : '+ Avancé'}
-          </button>
         </div>
 
-        {/* Chord List */}
+        {/* Chord List - Alphabetically Sorted */}
         <div className="p-6 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 200px)' }}>
-          <div className="space-y-6">
-            {/* Beginner */}
-            <div>
-              <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-3 flex items-center">
-                <span className="w-3 h-3 bg-blue-500 rounded-full mr-2" />
-                {language === 'en' ? 'Beginner' : 'Débutant'} ({chordsByDifficulty.beginner.length})
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-                {chordsByDifficulty.beginner.map(renderChordButton)}
-              </div>
-            </div>
-
-            {/* Intermediate */}
-            <div>
-              <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-3 flex items-center">
-                <span className="w-3 h-3 bg-purple-500 rounded-full mr-2" />
-                {language === 'en' ? 'Intermediate' : 'Intermédiaire'} ({chordsByDifficulty.intermediate.length})
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-                {chordsByDifficulty.intermediate.map(renderChordButton)}
-              </div>
-            </div>
-
-            {/* Advanced */}
-            <div>
-              <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-3 flex items-center">
-                <span className="w-3 h-3 bg-orange-500 rounded-full mr-2" />
-                {language === 'en' ? 'Advanced' : 'Avancé'} ({chordsByDifficulty.advanced.length})
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-                {chordsByDifficulty.advanced.map(renderChordButton)}
-              </div>
-            </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+            {sortedChords.map(renderChordButton)}
           </div>
         </div>
 
