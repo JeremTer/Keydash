@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import * as Tone from 'tone';
 import type { GameSettings, GameState, Chord } from './types';
 import { getRandomChord } from './utils/chordUtils';
 import { playChord, preloadSamples, stopAllSounds } from './utils/soundUtils';
@@ -55,11 +56,17 @@ function App() {
       return;
     }
 
-    // Preload piano samples if sound is enabled (ensures first chord plays correctly)
+    // For iOS Safari: Unlock audio context IMMEDIATELY within user gesture
+    // Must happen synchronously before any async operations
     if (settings.playSound) {
+      // Unlock audio context right away (critical for iOS)
+      await Tone.start();
+      if (Tone.context.state === 'suspended') {
+        await Tone.context.resume();
+      }
+
+      // Now load samples and play first chord
       await preloadSamples();
-      // Play the first chord immediately within user gesture (critical for iOS)
-      // This must happen synchronously during the button click event
       await playChord(chord.notes, settings.countdownDuration);
     }
 
