@@ -1,5 +1,5 @@
 import type { Chord, GameSettings } from '../types';
-import { CHORDS, NOTE_TRANSLATIONS, CHORD_TYPE_NAMES } from '../data/chords';
+import { CHORDS, NOTE_TRANSLATIONS } from '../data/chords';
 
 /**
  * Get a random chord from the pool based on game settings
@@ -52,12 +52,19 @@ export const getAvailableChords = (settings: GameSettings): Chord[] => {
 
 /**
  * Get chord name in the specified language
+ * Major chords: just the root note (e.g., "C", "D")
+ * Minor chords: root note + "m" (e.g., "Cm", "Dm")
  */
 export const getChordName = (chord: Chord, language: 'en' | 'fr'): string => {
   const rootNote = NOTE_TRANSLATIONS[chord.root]?.[language] || chord.root;
-  const chordType = CHORD_TYPE_NAMES[chord.type][language];
 
-  return `${rootNote} ${chordType}`;
+  // Major chords: just the root note
+  if (chord.type === 'major') {
+    return rootNote;
+  }
+
+  // Minor chords: root note + "m"
+  return `${rootNote}m`;
 };
 
 /**
