@@ -19,8 +19,11 @@ export interface Chord {
   difficulty: Difficulty;
 }
 
+export type GameMode = 'speed' | 'beginner';
+
 export interface GameSettings {
   language: Language;
+  gameMode: GameMode; // Speed Practice (timed) or Beginner Learning (reveal)
   chordTypes: ChordType[]; // Which chord types to include
   difficulty: Difficulty | 'all';
   countdownDuration: number; // seconds
@@ -36,4 +39,5 @@ export interface GameState {
   currentChord: Chord | null;
   timeRemaining: number;
   chordChangeCount: number; // Increments each time chord changes (for sound triggering)
+  isRevealed: boolean; // For beginner mode: whether the chord has been revealed
 }

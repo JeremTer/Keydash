@@ -17,6 +17,7 @@ import { ChordSelector } from './components/ChordSelector';
 // Default settings when app first loads
 const DEFAULT_SETTINGS: GameSettings = {
   language: 'en',
+  gameMode: 'speed',
   chordTypes: ['major', 'minor'],
   difficulty: 'all',
   countdownDuration: 5,
@@ -34,6 +35,7 @@ function App() {
     currentChord: null,
     timeRemaining: 0,
     chordChangeCount: 0,
+    isRevealed: false,
   });
   const [showChordSelector, setShowChordSelector] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -64,8 +66,9 @@ function App() {
       isPlaying: true,
       isPaused: false,
       currentChord: chord,
-      timeRemaining: settings.countdownDuration,
+      timeRemaining: settings.gameMode === 'speed' ? settings.countdownDuration : 0,
       chordChangeCount: 1, // Start at 1
+      isRevealed: settings.gameMode === 'speed' ? false : (settings.showChordOnKeyboard ? true : false),
     });
   };
 
@@ -91,19 +94,47 @@ function App() {
       currentChord: null,
       timeRemaining: 0,
       chordChangeCount: 0,
+      isRevealed: false,
     });
+  };
+
+  // Reveal chord (Beginner mode)
+  const handleReveal = () => {
+    setGameState((prev) => ({
+      ...prev,
+      isRevealed: true,
+      chordChangeCount: prev.chordChangeCount + 1, // Trigger sound
+    }));
+  };
+
+  // Next chord (Beginner mode)
+  const handleNext = () => {
+    const nextChord = getNextChord();
+    if (!nextChord) {
+      // No more chords available, stop the game
+      handleStop();
+      return;
+    }
+
+    setGameState((prev) => ({
+      ...prev,
+      currentChord: nextChord,
+      isRevealed: settings.showChordOnKeyboard ? true : false,
+      chordChangeCount: settings.showChordOnKeyboard ? prev.chordChangeCount + 1 : prev.chordChangeCount,
+    }));
   };
 
   /**
    * Timer Logic - Core Game Loop
    *
-   * Runs every 100ms when game is active and not paused.
+   * Runs every 100ms when game is active and not paused, and ONLY in speed mode.
    * - Decrements time by 0.1 seconds
    * - When time reaches 0, loads next chord
    * - Stops game if no chords available
    */
   useEffect(() => {
-    if (!gameState.isPlaying || gameState.isPaused) {
+    // Only run timer in speed mode
+    if (!gameState.isPlaying || gameState.isPaused || settings.gameMode !== 'speed') {
       return;
     }
 
@@ -121,6 +152,7 @@ function App() {
               currentChord: null,
               timeRemaining: 0,
               chordChangeCount: 0,
+              isRevealed: false,
             };
           }
 
@@ -129,6 +161,7 @@ function App() {
             currentChord: nextChord,
             timeRemaining: settings.countdownDuration,
             chordChangeCount: prev.chordChangeCount + 1, // Increment to trigger sound
+            isRevealed: false,
           };
         }
 
@@ -140,7 +173,7 @@ function App() {
     }, 100);
 
     return () => clearInterval(interval);
-  }, [gameState.isPlaying, gameState.isPaused, settings.countdownDuration, getNextChord]);
+  }, [gameState.isPlaying, gameState.isPaused, settings.countdownDuration, settings.gameMode, getNextChord]);
 
   /**
    * Sound Playback Logic
@@ -226,6 +259,7 @@ function App() {
                 timeRemaining={gameState.timeRemaining}
                 totalTime={settings.countdownDuration}
                 language={settings.language}
+                gameMode={settings.gameMode}
               />
             </div>
 
@@ -234,7 +268,12 @@ function App() {
               <PianoKeyboard
                 highlightedNotes={gameState.currentChord?.notes || []}
                 fingering={gameState.currentChord?.fingering || []}
-                showHighlight={settings.showChordOnKeyboard && gameState.isPlaying}
+                showHighlight={
+                  gameState.isPlaying &&
+                  (settings.gameMode === 'speed'
+                    ? settings.showChordOnKeyboard
+                    : gameState.isRevealed)
+                }
               />
             </div>
 
@@ -247,7 +286,33 @@ function App() {
                 >
                   {settings.language === 'en' ? '▶ Start' : '▶ Démarrer'}
                 </button>
+              ) : settings.gameMode === 'beginner' ? (
+                // Beginner mode controls
+                <>
+                  {!gameState.isRevealed ? (
+                    <button
+                      onClick={handleReveal}
+                      className="px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105 min-w-[180px]"
+                    >
+                      {settings.language === 'en' ? '👁 Reveal' : '👁 Révéler'}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleNext}
+                      className="px-8 py-4 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105 min-w-[180px]"
+                    >
+                      {settings.language === 'en' ? '➡ Next' : '➡ Suivant'}
+                    </button>
+                  )}
+                  <button
+                    onClick={handleStop}
+                    className="px-8 py-4 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    {settings.language === 'en' ? '⏹ Stop' : '⏹ Arrêter'}
+                  </button>
+                </>
               ) : (
+                // Speed mode controls
                 <>
                   <button
                     onClick={handlePause}

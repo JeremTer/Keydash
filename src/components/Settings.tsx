@@ -1,4 +1,4 @@
-import type { GameSettings, ChordType } from '../types';
+import type { GameSettings, ChordType, GameMode } from '../types';
 
 interface SettingsProps {
   settings: GameSettings;
@@ -15,6 +15,13 @@ export const Settings: React.FC<SettingsProps> = ({
     onSettingsChange({
       ...settings,
       language,
+    });
+  };
+
+  const handleGameModeChange = (gameMode: GameMode) => {
+    onSettingsChange({
+      ...settings,
+      gameMode,
     });
   };
 
@@ -94,6 +101,37 @@ export const Settings: React.FC<SettingsProps> = ({
         </div>
       </div>
 
+      {/* Game Mode Selection */}
+      <div>
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block mb-2">
+          {settings.language === 'en' ? 'Game Mode' : 'Mode de jeu'}
+        </label>
+        <div className="flex gap-2">
+          <button
+            onClick={() => handleGameModeChange('beginner')}
+            disabled={disabled}
+            className={`flex-1 px-4 py-2 rounded-lg transition-colors ${
+              settings.gameMode === 'beginner'
+                ? 'bg-green-500 text-white'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            {settings.language === 'en' ? 'Beginner Learning' : 'Apprentissage'}
+          </button>
+          <button
+            onClick={() => handleGameModeChange('speed')}
+            disabled={disabled}
+            className={`flex-1 px-4 py-2 rounded-lg transition-colors ${
+              settings.gameMode === 'speed'
+                ? 'bg-green-500 text-white'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            {settings.language === 'en' ? 'Speed Practice' : 'Pratique rapide'}
+          </button>
+        </div>
+      </div>
+
       {/* Practice Mode */}
       <div>
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block mb-2">
@@ -156,32 +194,40 @@ export const Settings: React.FC<SettingsProps> = ({
         </div>
       </div>
 
-      {/* Countdown Duration */}
-      <div>
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block mb-2">
-          {settings.language === 'en' ? 'Countdown Duration' : 'Durée du compte à rebours'}:{' '}
-          {settings.countdownDuration}s
-        </label>
-        <input
-          type="range"
-          min="1"
-          max="10"
-          step="1"
-          value={settings.countdownDuration}
-          onChange={(e) => handleDurationChange(Number(e.target.value))}
-          disabled={disabled}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-        />
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span>1s</span>
-          <span>10s</span>
+      {/* Countdown Duration - Only for Speed Mode */}
+      {settings.gameMode === 'speed' && (
+        <div>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block mb-2">
+            {settings.language === 'en' ? 'Countdown Duration' : 'Durée du compte à rebours'}:{' '}
+            {settings.countdownDuration}s
+          </label>
+          <input
+            type="range"
+            min="1"
+            max="10"
+            step="1"
+            value={settings.countdownDuration}
+            onChange={(e) => handleDurationChange(Number(e.target.value))}
+            disabled={disabled}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+          <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <span>1s</span>
+            <span>10s</span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Show Chord on Keyboard */}
       <div className="flex items-center justify-between">
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          {settings.language === 'en' ? 'Show chord on keyboard' : 'Afficher l\'accord sur le clavier'}
+          {settings.gameMode === 'speed'
+            ? settings.language === 'en'
+              ? 'Show chord on keyboard'
+              : 'Afficher l\'accord sur le clavier'
+            : settings.language === 'en'
+            ? 'Auto-reveal chord'
+            : 'Révéler l\'accord automatiquement'}
         </label>
         <button
           onClick={handleShowChordToggle}
