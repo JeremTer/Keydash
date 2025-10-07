@@ -38,6 +38,33 @@ function App() {
   });
   const [showChordSelector, setShowChordSelector] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [samplesPreloaded, setSamplesPreloaded] = useState(false);
+
+  // Preload audio samples on first user interaction (critical for iOS)
+  useEffect(() => {
+    const preloadOnFirstInteraction = async () => {
+      if (!samplesPreloaded && settings.playSound) {
+        await preloadSamples();
+        setSamplesPreloaded(true);
+      }
+    };
+
+    // Preload on any user interaction
+    const handleInteraction = () => {
+      preloadOnFirstInteraction();
+      // Remove listeners after first interaction
+      document.removeEventListener('touchstart', handleInteraction);
+      document.removeEventListener('click', handleInteraction);
+    };
+
+    document.addEventListener('touchstart', handleInteraction, { once: true });
+    document.addEventListener('click', handleInteraction, { once: true });
+
+    return () => {
+      document.removeEventListener('touchstart', handleInteraction);
+      document.removeEventListener('click', handleInteraction);
+    };
+  }, [samplesPreloaded, settings.playSound]);
 
   // Get a new random chord (excluding the current one to prevent repetition)
   const getNextChord = useCallback((): Chord | null => {
@@ -56,18 +83,17 @@ function App() {
       return;
     }
 
-    // For iOS Safari: Unlock audio context IMMEDIATELY within user gesture
-    // Must happen synchronously before any async operations
+    // For iOS Safari: Start audio context and play immediately
+    // Samples are already preloaded from first user interaction
     if (settings.playSound) {
-      // Unlock audio context right away (critical for iOS)
-      await Tone.start();
+      // Unlock and resume audio context (synchronous calls)
+      Tone.start();
       if (Tone.context.state === 'suspended') {
-        await Tone.context.resume();
+        Tone.context.resume();
       }
 
-      // Now load samples and play first chord
-      await preloadSamples();
-      await playChord(chord.notes, settings.countdownDuration);
+      // Play first chord immediately (samples already loaded)
+      playChord(chord.notes, settings.countdownDuration);
     }
 
     setGameState({
