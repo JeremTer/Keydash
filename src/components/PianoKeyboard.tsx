@@ -1,7 +1,16 @@
+/**
+ * PianoKeyboard Component
+ *
+ * Interactive SVG piano keyboard (2+ octaves) with chord highlighting.
+ * - Highlights chord notes in green
+ * - Shows finger numbers on highlighted notes
+ * - Handles enharmonic note matching (e.g., C# = Db)
+ * - Visibility controlled by game mode and settings
+ */
 interface PianoKeyboardProps {
   highlightedNotes?: string[];
   fingering?: number[];
-  showHighlight?: boolean;
+  showHighlight?: boolean; // Controls whether highlights are visible
 }
 
 // Define the piano keys with Middle C (C4) in the CENTER

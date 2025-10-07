@@ -54,14 +54,15 @@ The app uses **React's built-in hooks** for state management (no external librar
 
 **Main State** (in `App.tsx`):
 ```typescript
-// Settings state - user preferences
+// Settings state - user preferences (includes gameMode: 'speed' | 'beginner')
 const [settings, setSettings] = useState<GameSettings>(...)
 
-// Game state - current game status
+// Game state - current game status (includes isRevealed for beginner mode)
 const [gameState, setGameState] = useState<GameState>(...)
 
 // UI state - modal visibility
 const [showChordSelector, setShowChordSelector] = useState(false)
+const [showSettings, setShowSettings] = useState(false)
 ```
 
 ### 2. Data Flow
@@ -94,16 +95,21 @@ App.tsx (updates state)
 
 **Key Features:**
 - Manages global settings and game state
-- Timer logic using `useEffect` with 100ms interval
+- **Dual-mode system**: Speed Practice (timed) and Beginner Learning (reveal-based)
+- Timer logic using `useEffect` with 100ms interval (Speed mode only)
 - Generates random chords based on settings
-- Handles Start/Pause/Stop actions
+- Handles Start/Pause/Stop actions (Speed mode)
+- Handles Reveal/Next actions (Beginner mode)
 
 **Important Code Patterns:**
 
 ```typescript
-// Timer runs every 100ms when game is active
+// Timer runs every 100ms when game is active (SPEED MODE ONLY)
 useEffect(() => {
-  if (!gameState.isPlaying || gameState.isPaused) return;
+  // Only run timer in speed mode
+  if (!gameState.isPlaying || gameState.isPaused || settings.gameMode !== 'speed') {
+    return;
+  }
 
   const interval = setInterval(() => {
     setGameState((prev) => {
@@ -112,7 +118,7 @@ useEffect(() => {
       // Time's up - get next chord
       if (newTime <= 0) {
         const nextChord = getNextChord();
-        return { ...prev, currentChord: nextChord, timeRemaining: duration };
+        return { ...prev, currentChord: nextChord, timeRemaining: duration, isRevealed: false };
       }
 
       return { ...prev, timeRemaining: newTime };
@@ -120,51 +126,78 @@ useEffect(() => {
   }, 100);
 
   return () => clearInterval(interval); // Cleanup
-}, [gameState.isPlaying, gameState.isPaused, ...]);
+}, [gameState.isPlaying, gameState.isPaused, settings.gameMode, ...]);
 ```
 
 **Why this works:**
 - `setGameState` with function form ensures we have the latest state
 - Dependencies array ensures effect re-runs when needed
 - Cleanup function prevents memory leaks
+- **Game mode check prevents timer in Beginner mode**
+
+**Beginner Mode Pattern:**
+
+```typescript
+// Reveal button - shows chord on keyboard
+const handleReveal = () => {
+  setGameState((prev) => ({
+    ...prev,
+    isRevealed: true,
+    chordChangeCount: prev.chordChangeCount + 1, // Trigger sound
+  }));
+};
+
+// Next button - loads next chord
+const handleNext = () => {
+  const nextChord = getNextChord();
+  setGameState((prev) => ({
+    ...prev,
+    currentChord: nextChord,
+    isRevealed: settings.showChordOnKeyboard, // Auto-reveal if enabled
+  }));
+};
+```
 
 ---
 
 ### ChordDisplay.tsx - Chord Name & Timer
 
-**Responsibility:** Display current chord and countdown timer
+**Responsibility:** Display current chord and countdown timer (mode-aware)
 
 **Key Features:**
 - Shows chord name in selected language (en/fr)
-- Circular SVG countdown timer (120px diameter)
+- **Conditional timer display**: Only shown in Speed Practice mode
+- Circular SVG countdown timer (120px diameter) - Speed mode only
 - Color-coded warnings (blue → orange → red)
-- Shows difficulty badges and popularity stars
-- **Compact side-by-side layout** (chord name left, timer right)
+- **Adaptive layout**:
+  - Speed mode: Side-by-side (chord left, timer right)
+  - Beginner mode: Centered chord name only
 - **Fixed height to prevent layout shifts** when starting/stopping
 
 **Layout Stability:**
 ```typescript
 // Main container with fixed minimum height
 <div className="py-4 px-4 min-h-[140px]">
-  // Flex container for side-by-side layout
   <div className="flex items-center justify-between">
-    // Chord name area with min-height
-    <div className="flex-1 min-h-[100px]">
-      {chord ? <ChordInfo /> : <StartMessage />}
+    // Chord name - centered in beginner mode, left-aligned in speed mode
+    <div className={`flex-1 ${gameMode === 'speed' ? 'text-center md:text-left' : 'text-center'}`}>
+      {chord ? <ChordName /> : <StartMessage />}
     </div>
-    // Timer always reserves 120px width
-    <div className="flex-shrink-0 w-[120px]">
-      <Timer /> // Always visible, even when paused
-    </div>
+    // Timer only shown in speed mode
+    {gameMode === 'speed' && (
+      <div className="flex-shrink-0 w-[120px]">
+        <Timer />
+      </div>
+    )}
   </div>
 </div>
 ```
 
 **Why this design:**
-- Timer is always visible (even when paused) to prevent jumping
-- Fixed widths and heights prevent layout shifts
-- Side-by-side layout saves vertical space for the piano keyboard
-- Chord name and timer visible at the same time
+- Timer only appears when relevant (Speed Practice mode)
+- Beginner mode has centered layout for better focus
+- Fixed heights prevent layout shifts
+- Conditional rendering based on `gameMode` prop
 
 **SVG Circle Animation:**
 ```typescript
@@ -229,11 +262,14 @@ const isHighlighted = (note: string) => {
 
 **Key Features:**
 - **Two-button language selection** (English 🇬🇧 / Français 🇫🇷) - both options visible
+- **Game mode selection** (Beginner Learning / Speed Practice) - determines UI and behavior
 - Practice mode selection (Learn All / Learn Selected)
 - Chord type filters (Major/Minor)
 - Difficulty filters (All / Beginner / Intermediate / Advanced)
-- Duration slider (1-10s)
-- Show/hide chord toggle (switch component)
+- **Conditional duration slider** (1-10s) - only shown in Speed Practice mode
+- **Adaptive chord visibility toggle**:
+  - Speed mode: "Show chord on keyboard"
+  - Beginner mode: "Auto-reveal chord"
 
 **UI Improvements:**
 - Language selector changed from toggle button to two-button group
@@ -300,13 +336,17 @@ overflow-y: auto
 **Core Types:**
 
 ```typescript
+// Game mode type
+export type GameMode = 'speed' | 'beginner';
+
 // User preferences
 export interface GameSettings {
   language: 'en' | 'fr';
+  gameMode: GameMode;             // Speed Practice or Beginner Learning
   chordTypes: ChordType[];        // ['major', 'minor']
   difficulty: Difficulty | 'all'; // Filtering
-  countdownDuration: number;      // 1-10 seconds
-  showChordOnKeyboard: boolean;
+  countdownDuration: number;      // 1-10 seconds (Speed mode only)
+  showChordOnKeyboard: boolean;   // Different meaning per mode
   selectedChords: string[];       // For "Learn Selected" mode
   mode: 'all' | 'selected';
 }
@@ -314,9 +354,11 @@ export interface GameSettings {
 // Current game status
 export interface GameState {
   isPlaying: boolean;
-  isPaused: boolean;
+  isPaused: boolean;              // Only used in Speed mode
   currentChord: Chord | null;
-  timeRemaining: number;
+  timeRemaining: number;          // Only used in Speed mode
+  chordChangeCount: number;       // Triggers sound playback
+  isRevealed: boolean;            // Beginner mode: has chord been revealed?
 }
 
 // Chord data structure
@@ -325,16 +367,18 @@ export interface Chord {
   root: string;                  // "C"
   type: ChordType;               // "major" | "minor"
   notes: string[];               // ["C", "E", "G"]
+  fingering: number[];           // [1, 3, 5] (right hand)
   difficulty: Difficulty;        // "beginner" | "intermediate" | "advanced"
-  popularity: number;            // 1-5 (for stars)
 }
 ```
 
 **Why these types:**
 - `GameSettings` - everything user can configure
-- `GameState` - ephemeral runtime state
+- `GameState` - ephemeral runtime state (includes mode-specific fields)
+- `GameMode` - explicit type for the two modes
 - `Chord` - single source of truth for chord data
 - Separation makes state management clearer
+- Mode-specific fields clearly documented
 
 ---
 
@@ -343,7 +387,7 @@ export interface Chord {
 **All 24 Major and Minor Chords:**
 - **Beginner (10):** C, G, F, D, A, E major + A, D, E, C minor
 - **Intermediate (9):** B, Bb, Eb, Ab, Db major + F, G, B, Bb minor
-- **Advanced (8):** Gb, C#, F# major + C#, F#, G#, Eb, Ab minor
+- **Advanced (5):** F# major + C#, F#, G#, Eb minor
 
 **Data Structure:**
 ```typescript
@@ -353,38 +397,12 @@ export const CHORDS: Chord[] = [
     root: 'C',
     type: 'major',
     notes: ['C', 'E', 'G'],
+    fingering: [1, 3, 5], // Right hand: thumb, middle, pinky
     difficulty: 'beginner',
-    popularity: 5, // Based on real-world data
   },
   // ... more chords
 ];
 ```
-
-**Popularity Ratings - Research-Based:**
-
-The popularity ratings are based on **analysis of 1,300+ popular songs** (source: Hooktheory):
-
-- **5 stars**: C, G, F major + A, D, E minor
-  - The "Big Four" chords (I, V, IV, vi in C major)
-  - Most common across all genres
-  - Fewest accidentals (natural keys)
-
-- **4 stars**: D, A, E major + C minor, Bb major, G, B minor
-  - Common in pop, jazz, and rock
-  - Relatively few accidentals
-  - Frequently used progressions
-
-- **3 stars**: Eb major, F, C#, F# minor
-  - Moderate usage in specific genres
-  - Some accidentals but manageable
-
-- **2 stars**: Ab, Db, B major + Bb, G#, F# minor
-  - Less common due to more accidentals
-  - Used in specific keys
-
-- **1 star**: Gb, C# major + Eb, Ab minor
-  - Very rare (6-7 accidentals)
-  - Mostly theoretical/enharmonic equivalents
 
 **Note Translations:**
 ```typescript
@@ -399,8 +417,8 @@ export const NOTE_TRANSLATIONS = {
 **Design Decisions:**
 - Hardcoded data (no API) for simplicity and speed
 - Each chord has explicit notes (no calculation needed)
-- **Popularity based on real music data** - helps users learn most-used chords first
-- Popularity correlates with key signature complexity (fewer accidentals = more popular)
+- Includes fingering for proper technique learning
+- Difficulty based on key signature complexity (fewer accidentals = easier)
 - Easy to extend (add more chords, add 7th chords, etc.)
 
 ---
@@ -868,17 +886,17 @@ const elapsed = Date.now() - startTime;
 
 | File | Lines | Purpose | Complexity |
 |------|-------|---------|------------|
-| `App.tsx` | ~220 | Main app logic | Medium |
-| `ChordDisplay.tsx` | ~80 | Display chord & timer | Low |
+| `App.tsx` | ~340 | Main app logic (dual-mode) | Medium-High |
+| `ChordDisplay.tsx` | ~85 | Display chord & timer (mode-aware) | Low |
 | `PianoKeyboard.tsx` | ~130 | SVG keyboard | Medium |
-| `Settings.tsx` | ~200 | Settings UI | Low |
+| `Settings.tsx` | ~250 | Settings UI (mode-aware) | Low-Medium |
 | `ChordSelector.tsx` | ~180 | Chord selection modal | Medium |
 | `chordUtils.ts` | ~70 | Utility functions | Low |
 | `soundUtils.ts` | ~175 | Piano sound playback | Medium |
 | `chords.ts` | ~200 | Chord data | None (data) |
-| `types.ts` | ~40 | TypeScript types | None (types) |
+| `types.ts` | ~45 | TypeScript types | None (types) |
 
-**Total:** ~1,295 lines of code (excluding comments)
+**Total:** ~1,475 lines of code (excluding comments)
 
 ---
 

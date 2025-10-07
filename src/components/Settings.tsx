@@ -1,9 +1,18 @@
+/**
+ * Settings Component
+ *
+ * User preferences panel with mode-aware controls.
+ * - Game Mode selector (Beginner Learning / Speed Practice)
+ * - Language selection
+ * - Chord type and difficulty filters
+ * - Conditional settings based on game mode (e.g., countdown duration only in Speed mode)
+ */
 import type { GameSettings, ChordType, GameMode } from '../types';
 
 interface SettingsProps {
   settings: GameSettings;
   onSettingsChange: (settings: GameSettings) => void;
-  disabled?: boolean;
+  disabled?: boolean; // Disabled during active game session
 }
 
 export const Settings: React.FC<SettingsProps> = ({

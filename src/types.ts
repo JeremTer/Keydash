@@ -1,3 +1,13 @@
+/**
+ * TypeScript Type Definitions
+ *
+ * Core types for the Piano Chord Practice app.
+ * - GameMode: Speed Practice or Beginner Learning
+ * - GameSettings: User preferences
+ * - GameState: Runtime game state (includes mode-specific fields)
+ * - Chord: Chord data structure with notes, fingering, and metadata
+ */
+
 export type Language = 'en' | 'fr';
 
 export type ChordType = 'major' | 'minor';

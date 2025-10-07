@@ -4,7 +4,9 @@ A beautiful, interactive piano chord practice application built with React, Type
 
 ## Features
 
-- **Timer-Based Practice**: Configurable countdown timer (1-10 seconds) for each chord
+- **Two Game Modes**:
+  - **Speed Practice**: Timed mode with automatic chord changes and countdown timer (1-10 seconds)
+  - **Beginner Learning**: Self-paced mode where you reveal chords manually when ready - no time pressure!
 - **Visual Piano Keyboard**: Interactive SVG piano keyboard with green chord highlighting
   - Middle C positioned at the center of the keyboard
   - Right hand notes (octave 4) highlighted on the RIGHT side of middle C
@@ -28,10 +30,9 @@ A beautiful, interactive piano chord practice application built with React, Type
   - Chord types (Major, Minor, or both)
   - Difficulty levels (Beginner, Intermediate, Advanced, or all)
 - **Visual Feedback**:
-  - Chord name and timer displayed side-by-side for optimal space
-  - Circular countdown timer with color-coded warnings (blue → orange → red)
-  - Chord difficulty badges (blue background)
-  - **Prominent popularity ratings** (yellow badge with 1-5 stars, displayed next to difficulty during gameplay, based on 1,300+ song analysis)
+  - Chord name displayed prominently (centered in Beginner mode, left-aligned in Speed mode)
+  - Circular countdown timer with color-coded warnings (blue → orange → red) - Speed Practice mode only
+  - Clean, distraction-free interface
 - **Stable Layout**: No jumping or shifting when starting, stopping, or pausing
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
 - **Modern UI**: Clean, professional interface with smooth animations
@@ -124,11 +125,14 @@ Just build the project and upload the `dist` folder.
 
 1. **Configure Settings** (left panel):
    - Choose your language (English/French)
+   - **Select your game mode** (Beginner Learning / Speed Practice)
    - Select practice mode (Learn All / Learn Selected)
    - Filter chord types (Major/Minor)
    - Set difficulty level
-   - Adjust countdown duration
-   - Toggle chord highlighting on keyboard
+   - Adjust countdown duration (Speed Practice mode only)
+   - Toggle chord visibility settings:
+     - **Speed Practice**: Show/hide chord on keyboard during practice
+     - **Beginner Learning**: Auto-reveal chord or use manual reveal button
    - Tap the sound button to mute/unmute piano playback (with speaker icon)
 
 2. **Select Chords** (if using "Learn Selected" mode):
@@ -137,11 +141,21 @@ Just build the project and upload the `dist` folder.
    - Click "Done" when finished
 
 3. **Start Practice**:
+
+   **Speed Practice Mode:**
    - Click the "Start" button
-   - A random chord will appear
+   - A random chord will appear with a countdown timer
    - Play the chord on your piano before time runs out
    - The app automatically moves to the next chord
    - Use Pause/Resume and Stop buttons as needed
+
+   **Beginner Learning Mode:**
+   - Click the "Start" button
+   - A random chord name will appear
+   - Take your time to find the chord on your real keyboard
+   - When ready, click "Reveal" to see the chord highlighted on screen
+   - Click "Next" to move to the next chord at your own pace
+   - Use Stop button to end practice session
 
 ## Project Structure
 
@@ -168,23 +182,12 @@ The app includes **all 24 major and minor chords** (12 major + 12 minor) across 
 - **Intermediate** (9 chords): B, Bb, Eb, Ab, Db major + F, G, B, Bb minor
 - **Advanced** (5 chords): F# major + C#, F#, G#, Eb minor
 
-### Popularity Ratings
-
-Chord popularity ratings are based on **real-world music analysis** of 1,300+ popular songs:
-
-- **5 stars**: C, G, F major + A, D, E minor (most common - the "Big Four" + natural keys)
-- **4 stars**: D, A, E major + C minor, Bb major, G, B minor (common in pop/jazz)
-- **3 stars**: Eb, F major + F, C#, F# minor (moderate usage)
-- **2 stars**: Ab, Db, B major + Bb, G#, F# minor (less common - more accidentals)
-- **1 star**: Eb minor (rare - 6 flats)
-
 Each chord includes:
 - Root note
 - Chord type (major/minor)
 - All notes in the chord
 - **Right hand fingering** (1-3-5 for all triads in root position)
 - Difficulty level (based on hand position and key signature)
-- **Accurate popularity rating** (based on frequency in popular music)
 
 ## Technologies Used
 
@@ -210,11 +213,13 @@ Contributions are welcome! Feel free to:
 
 Potential features for future versions:
 - Progress tracking and statistics
+- Performance metrics (accuracy, speed)
 - More chord types (7th, 9th, diminished, augmented)
 - MIDI keyboard input support
-- Custom chord sets
-- Practice session history
+- Custom chord sets and progressions
+- Practice session history and analytics
 - Adjustable sound settings (volume, instrument type)
+- Spaced repetition learning algorithm
 
 ---
 

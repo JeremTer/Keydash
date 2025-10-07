@@ -1,3 +1,10 @@
+/**
+ * ChordDisplay Component
+ *
+ * Displays the current chord name and countdown timer (mode-aware).
+ * - Speed Practice mode: Shows chord name and circular countdown timer
+ * - Beginner Learning mode: Shows only the chord name (centered)
+ */
 import type { Chord, GameMode } from '../types';
 import { getChordName } from '../utils/chordUtils';
 
@@ -6,7 +13,7 @@ interface ChordDisplayProps {
   timeRemaining: number;
   totalTime: number;
   language: 'en' | 'fr';
-  gameMode?: GameMode;
+  gameMode?: GameMode; // Determines layout and timer visibility
 }
 
 export const ChordDisplay: React.FC<ChordDisplayProps> = ({

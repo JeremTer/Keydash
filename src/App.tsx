@@ -2,7 +2,11 @@
  * Piano Chord Practice App - Main Component
  *
  * This component manages the entire application state and game logic.
- * It orchestrates the timer, chord selection, and user interactions.
+ * Supports two game modes:
+ * - Speed Practice: Timed mode with automatic chord changes
+ * - Beginner Learning: Self-paced mode with manual reveal/next controls
+ *
+ * It orchestrates the timer (speed mode), chord selection, and user interactions.
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -45,7 +49,13 @@ function App() {
     return getRandomChord(settings, gameState.currentChord);
   }, [settings, gameState.currentChord]);
 
-  // Start game
+  /**
+   * Start Game Handler
+   *
+   * Initializes the game session based on selected mode:
+   * - Speed mode: Starts with countdown timer
+   * - Beginner mode: Starts with optional auto-reveal
+   */
   const handleStart = async () => {
     const chord = getNextChord();
     if (!chord) {
@@ -72,7 +82,11 @@ function App() {
     });
   };
 
-  // Pause game
+  /**
+   * Pause Game Handler (Speed mode only)
+   *
+   * Toggles pause state and stops any playing sounds
+   */
   const handlePause = () => {
     // Stop any playing sounds immediately when pausing
     stopAllSounds();
@@ -83,7 +97,12 @@ function App() {
     }));
   };
 
-  // Stop game
+  /**
+   * Stop Game Handler
+   *
+   * Resets game state and stops all sounds
+   * Works in both Speed and Beginner modes
+   */
   const handleStop = () => {
     // Stop any playing sounds
     stopAllSounds();
@@ -98,7 +117,11 @@ function App() {
     });
   };
 
-  // Reveal chord (Beginner mode)
+  /**
+   * Reveal Chord Handler (Beginner mode only)
+   *
+   * Shows the chord on the keyboard and plays the sound
+   */
   const handleReveal = () => {
     setGameState((prev) => ({
       ...prev,
@@ -107,7 +130,12 @@ function App() {
     }));
   };
 
-  // Next chord (Beginner mode)
+  /**
+   * Next Chord Handler (Beginner mode only)
+   *
+   * Loads the next random chord
+   * Auto-reveals if showChordOnKeyboard is enabled
+   */
   const handleNext = () => {
     const nextChord = getNextChord();
     if (!nextChord) {
@@ -178,10 +206,12 @@ function App() {
   /**
    * Sound Playback Logic
    *
-   * Plays the chord sound when a new chord appears and playSound is enabled
-   * Depends on chordChangeCount to trigger even when same chord repeats (single chord mode)
-   * NOTE: Only depends on chordChangeCount and playSound - NOT on isPaused/isPlaying
-   * This prevents sound from playing when resuming from pause
+   * Plays the chord sound when a new chord appears or is revealed:
+   * - Speed mode: Plays automatically on chord change
+   * - Beginner mode: Plays when Reveal button is clicked
+   *
+   * Depends on chordChangeCount to trigger even when same chord repeats
+   * Only plays when game is active and not paused
    */
   useEffect(() => {
     if (gameState.currentChord && settings.playSound && gameState.isPlaying && !gameState.isPaused && gameState.chordChangeCount > 0) {

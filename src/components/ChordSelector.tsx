@@ -1,9 +1,18 @@
+/**
+ * ChordSelector Component
+ *
+ * Modal interface for selecting specific chords to practice.
+ * - Allows individual chord selection
+ * - Quick actions: Select All, Select by Difficulty
+ * - Grouped by difficulty level
+ * - Used with "Learn Selected" practice mode
+ */
 import type { Chord } from '../types';
 import { CHORDS } from '../data/chords';
 import { getChordName } from '../utils/chordUtils';
 
 interface ChordSelectorProps {
-  selectedChords: string[];
+  selectedChords: string[]; // Array of chord IDs
   onSelectionChange: (chordIds: string[]) => void;
   language: 'en' | 'fr';
   onClose: () => void;
