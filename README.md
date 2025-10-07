@@ -8,8 +8,10 @@ A beautiful, interactive piano chord practice application built with React, Type
 - **Visual Piano Keyboard**: Interactive SVG piano keyboard with green chord highlighting
   - Middle C positioned at the center of the keyboard
   - Right hand notes (octave 4) highlighted on the RIGHT side of middle C
+  - **Finger numbers displayed on each highlighted note** (1=thumb, 3=middle, 5=pinky)
   - All chord notes highlighted in the same color for clarity
-  - 2-octave keyboard range (C3-C5) for visual reference
+  - Standard 1-3-5 fingering for all basic triads (root position)
+  - Extended keyboard range (C3-E5) to display all chord notes correctly
 - **Piano Sound Playback**: Hear each chord played automatically when it appears
   - Beautiful sound icon button to easily mute/unmute (speaker icon with sound waves)
   - Mobile-friendly large button with clear visual states (blue when on, gray when off)
@@ -35,7 +37,11 @@ A beautiful, interactive piano chord practice application built with React, Type
 ## Key Technical Features
 
 - **Smart Chord Rotation**: Never shows the same chord twice in a row (unless only one chord is selected)
-- **Right Hand Focus**: Visual keyboard highlights only show notes for right hand (octave 4), positioned on the right side of middle C
+- **Right Hand Focus**: Visual keyboard highlights show right hand notes across octaves 3-5, properly positioned relative to middle C
+- **Proper Fingering Display**: Each chord shows correct finger numbers (1-3-5 pattern for right hand triads)
+  - 1 = Thumb, 2 = Index, 3 = Middle, 4 = Ring, 5 = Pinky
+  - Standard fingering based on piano pedagogy best practices
+  - Displayed clearly within highlighted notes for easy learning
 - **Enharmonic Note Matching**: Correctly highlights chords with flats (Eb, Bb, Ab) even though keyboard shows sharps (D#, A#, G#)
 - **Instant Sound Control**: Pause and Stop buttons immediately silence any playing sounds
 - **Single Chord Mode**: Sound plays correctly each time even when practicing just one chord
@@ -174,6 +180,7 @@ Each chord includes:
 - Root note
 - Chord type (major/minor)
 - All notes in the chord
+- **Right hand fingering** (1-3-5 for all triads in root position)
 - Difficulty level (based on hand position and key signature)
 - **Accurate popularity rating** (based on frequency in popular music)
 

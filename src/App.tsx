@@ -210,6 +210,7 @@ function App() {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
               <PianoKeyboard
                 highlightedNotes={gameState.currentChord?.notes || []}
+                fingering={gameState.currentChord?.fingering || []}
                 showHighlight={settings.showChordOnKeyboard && gameState.isPlaying}
               />
             </div>

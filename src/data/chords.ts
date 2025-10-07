@@ -22,7 +22,8 @@ export const CHORDS: Chord[] = [
     id: 'C-major',
     root: 'C',
     type: 'major',
-    notes: ['C', 'E', 'G'],
+    notes: ['C4', 'E4', 'G4'], // Middle C and above
+    fingering: [1, 3, 5],
     difficulty: 'beginner',
     popularity: 5,
   },
@@ -30,7 +31,8 @@ export const CHORDS: Chord[] = [
     id: 'G-major',
     root: 'G',
     type: 'major',
-    notes: ['G', 'B', 'D'],
+    notes: ['G4', 'B4', 'D5'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'beginner',
     popularity: 5,
   },
@@ -38,7 +40,8 @@ export const CHORDS: Chord[] = [
     id: 'F-major',
     root: 'F',
     type: 'major',
-    notes: ['F', 'A', 'C'],
+    notes: ['F4', 'A4', 'C5'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'beginner',
     popularity: 5,
   },
@@ -46,7 +49,8 @@ export const CHORDS: Chord[] = [
     id: 'D-major',
     root: 'D',
     type: 'major',
-    notes: ['D', 'F#', 'A'],
+    notes: ['D4', 'F#4', 'A4'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'beginner',
     popularity: 4,
   },
@@ -54,7 +58,8 @@ export const CHORDS: Chord[] = [
     id: 'A-major',
     root: 'A',
     type: 'major',
-    notes: ['A', 'C#', 'E'],
+    notes: ['A3', 'C#4', 'E4'], // Spans octave 3-4
+    fingering: [1, 3, 5],
     difficulty: 'beginner',
     popularity: 4,
   },
@@ -62,7 +67,8 @@ export const CHORDS: Chord[] = [
     id: 'E-major',
     root: 'E',
     type: 'major',
-    notes: ['E', 'G#', 'B'],
+    notes: ['E4', 'G#4', 'B4'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'beginner',
     popularity: 4,
   },
@@ -72,7 +78,8 @@ export const CHORDS: Chord[] = [
     id: 'A-minor',
     root: 'A',
     type: 'minor',
-    notes: ['A', 'C', 'E'],
+    notes: ['A3', 'C4', 'E4'], // Spans octave 3-4
+    fingering: [1, 3, 5],
     difficulty: 'beginner',
     popularity: 5,
   },
@@ -80,7 +87,8 @@ export const CHORDS: Chord[] = [
     id: 'D-minor',
     root: 'D',
     type: 'minor',
-    notes: ['D', 'F', 'A'],
+    notes: ['D4', 'F4', 'A4'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'beginner',
     popularity: 5,
   },
@@ -88,7 +96,8 @@ export const CHORDS: Chord[] = [
     id: 'E-minor',
     root: 'E',
     type: 'minor',
-    notes: ['E', 'G', 'B'],
+    notes: ['E4', 'G4', 'B4'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'beginner',
     popularity: 5,
   },
@@ -96,7 +105,8 @@ export const CHORDS: Chord[] = [
     id: 'C-minor',
     root: 'C',
     type: 'minor',
-    notes: ['C', 'Eb', 'G'],
+    notes: ['C4', 'Eb4', 'G4'], // Middle C and above
+    fingering: [1, 3, 5],
     difficulty: 'beginner',
     popularity: 4,
   },
@@ -106,7 +116,8 @@ export const CHORDS: Chord[] = [
     id: 'B-major',
     root: 'B',
     type: 'major',
-    notes: ['B', 'D#', 'F#'],
+    notes: ['B3', 'D#4', 'F#4'], // Spans octave 3-4
+    fingering: [1, 3, 5],
     difficulty: 'intermediate',
     popularity: 2, // 5 sharps - less common
   },
@@ -114,7 +125,8 @@ export const CHORDS: Chord[] = [
     id: 'Bb-major',
     root: 'Bb',
     type: 'major',
-    notes: ['Bb', 'D', 'F'],
+    notes: ['Bb3', 'D4', 'F4'], // Spans octave 3-4
+    fingering: [1, 3, 5],
     difficulty: 'intermediate',
     popularity: 4, // Very common in jazz and pop
   },
@@ -122,7 +134,8 @@ export const CHORDS: Chord[] = [
     id: 'Eb-major',
     root: 'Eb',
     type: 'major',
-    notes: ['Eb', 'G', 'Bb'],
+    notes: ['Eb4', 'G4', 'Bb4'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'intermediate',
     popularity: 3, // Common in brass/wind music
   },
@@ -130,7 +143,8 @@ export const CHORDS: Chord[] = [
     id: 'Ab-major',
     root: 'Ab',
     type: 'major',
-    notes: ['Ab', 'C', 'Eb'],
+    notes: ['Ab3', 'C4', 'Eb4'], // Spans octave 3-4
+    fingering: [1, 3, 5],
     difficulty: 'intermediate',
     popularity: 2, // 4 flats - moderate usage
   },
@@ -138,7 +152,8 @@ export const CHORDS: Chord[] = [
     id: 'Db-major',
     root: 'Db',
     type: 'major',
-    notes: ['Db', 'F', 'Ab'],
+    notes: ['Db4', 'F4', 'Ab4'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'intermediate',
     popularity: 2, // 5 flats - less common
   },
@@ -148,7 +163,8 @@ export const CHORDS: Chord[] = [
     id: 'F-minor',
     root: 'F',
     type: 'minor',
-    notes: ['F', 'Ab', 'C'],
+    notes: ['F4', 'Ab4', 'C5'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'intermediate',
     popularity: 3, // Relative to Ab major
   },
@@ -156,7 +172,8 @@ export const CHORDS: Chord[] = [
     id: 'G-minor',
     root: 'G',
     type: 'minor',
-    notes: ['G', 'Bb', 'D'],
+    notes: ['G4', 'Bb4', 'D5'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'intermediate',
     popularity: 4, // Very common in pop/jazz
   },
@@ -164,7 +181,8 @@ export const CHORDS: Chord[] = [
     id: 'B-minor',
     root: 'B',
     type: 'minor',
-    notes: ['B', 'D', 'F#'],
+    notes: ['B3', 'D4', 'F#4'], // Spans octave 3-4
+    fingering: [1, 3, 5],
     difficulty: 'intermediate',
     popularity: 4, // Relative to D major, common
   },
@@ -172,7 +190,8 @@ export const CHORDS: Chord[] = [
     id: 'Bb-minor',
     root: 'Bb',
     type: 'minor',
-    notes: ['Bb', 'Db', 'F'],
+    notes: ['Bb3', 'Db4', 'F4'], // Spans octave 3-4
+    fingering: [1, 3, 5],
     difficulty: 'intermediate',
     popularity: 2, // Relative to Db major
   },
@@ -182,7 +201,8 @@ export const CHORDS: Chord[] = [
     id: 'F#-major',
     root: 'F#',
     type: 'major',
-    notes: ['F#', 'A#', 'C#'],
+    notes: ['F#4', 'A#4', 'C#5'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'advanced',
     popularity: 2, // 6 sharps - rare
   },
@@ -192,7 +212,8 @@ export const CHORDS: Chord[] = [
     id: 'C#-minor',
     root: 'C#',
     type: 'minor',
-    notes: ['C#', 'E', 'G#'],
+    notes: ['C#4', 'E4', 'G#4'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'advanced',
     popularity: 3, // Relative to E major, occasionally used
   },
@@ -200,7 +221,8 @@ export const CHORDS: Chord[] = [
     id: 'F#-minor',
     root: 'F#',
     type: 'minor',
-    notes: ['F#', 'A', 'C#'],
+    notes: ['F#4', 'A4', 'C#5'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'advanced',
     popularity: 3, // Relative to A major, occasionally used
   },
@@ -208,7 +230,8 @@ export const CHORDS: Chord[] = [
     id: 'G#-minor',
     root: 'G#',
     type: 'minor',
-    notes: ['G#', 'B', 'D#'],
+    notes: ['G#4', 'B4', 'D#5'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'advanced',
     popularity: 2, // Relative to B major, rare
   },
@@ -216,7 +239,8 @@ export const CHORDS: Chord[] = [
     id: 'Eb-minor',
     root: 'Eb',
     type: 'minor',
-    notes: ['Eb', 'Gb', 'Bb'],
+    notes: ['Eb4', 'Gb4', 'Bb4'], // Above middle C
+    fingering: [1, 3, 5],
     difficulty: 'advanced',
     popularity: 1, // 6 flats - very rare
   },

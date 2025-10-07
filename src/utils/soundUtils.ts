@@ -78,12 +78,12 @@ const getSampler = async (): Promise<Tone.Sampler> => {
 };
 
 /**
- * Convert note name to Tone.js format with octave
- * Examples: "C" -> "C4", "F#" -> "F#4", "Bb" -> "Bb4"
+ * Convert note name to Tone.js format
+ * Notes already have octaves (e.g., "C4", "F#4", "Bb4")
  */
 const noteToToneFormat = (note: string): string => {
-  // Default to octave 4 for middle range piano notes
-  return `${note}4`;
+  // Notes already include octave numbers
+  return note;
 };
 
 /**
