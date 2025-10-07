@@ -20,39 +20,39 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
 
   return (
     <div className="py-4 px-4 min-h-[140px]">
-      <div className="flex items-center justify-between gap-6 flex-wrap md:flex-nowrap">
+      <div className="flex items-center justify-between gap-3 md:gap-6">
         {/* Left: Chord Name and Info - Always reserve space */}
-        <div className="flex-1 text-center md:text-left min-h-[100px] flex flex-col justify-center">
+        <div className="flex-1 text-center md:text-left min-h-[80px] md:min-h-[100px] flex flex-col justify-center">
           {chord ? (
             <>
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-800 dark:text-white mb-2">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2">
                 {getChordName(chord, language)}
               </h1>
-              <div className="flex items-center justify-center md:justify-start space-x-3 text-sm">
-                <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded font-medium">
+              <div className="flex items-center justify-center md:justify-start space-x-2 md:space-x-3 text-xs md:text-sm flex-wrap gap-y-1">
+                <span className="px-2 md:px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded font-medium">
                   {chord.difficulty.charAt(0).toUpperCase() + chord.difficulty.slice(1)}
                 </span>
-                <span className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900 rounded font-medium flex items-center gap-1">
+                <span className="px-2 md:px-3 py-1 bg-yellow-100 dark:bg-yellow-900 rounded font-medium flex items-center gap-1">
                   <span className="text-yellow-700 dark:text-yellow-300 text-xs font-semibold">
-                    {language === 'en' ? 'Popularity' : 'Popularité'}:
+                    {language === 'en' ? 'Pop' : 'Pop'}:
                   </span>
-                  <span className="text-yellow-600 dark:text-yellow-400 text-base">
+                  <span className="text-yellow-600 dark:text-yellow-400 text-sm md:text-base">
                     {'★'.repeat(chord.popularity)}{'☆'.repeat(5 - chord.popularity)}
                   </span>
                 </span>
               </div>
             </>
           ) : (
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-400">
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-400">
               {language === 'en' ? 'Press Start to Begin' : 'Appuyez sur Démarrer'}
             </h1>
           )}
         </div>
 
-        {/* Right: Timer Circle - Always visible to prevent layout shift */}
-        <div className="flex-shrink-0 w-[120px]">
+        {/* Right: Timer Circle - Smaller on mobile, always visible to prevent layout shift */}
+        <div className="flex-shrink-0 w-[80px] md:w-[120px]">
           <div className="relative">
-            <svg width="120" height="120" className="transform -rotate-90">
+            <svg width="100%" height="100%" viewBox="0 0 120 120" className="transform -rotate-90">
               {/* Background circle */}
               <circle
                 cx="60"
@@ -78,7 +78,7 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
               <span
-                className={`text-3xl font-bold ${
+                className={`text-2xl md:text-3xl font-bold ${
                   isDanger ? 'text-red-500' : isWarning ? 'text-orange-500' : 'text-blue-500'
                 }`}
               >

@@ -57,6 +57,9 @@ function App() {
     // Preload piano samples if sound is enabled (ensures first chord plays correctly)
     if (settings.playSound) {
       await preloadSamples();
+      // Play the first chord immediately within user gesture (critical for iOS)
+      // This must happen synchronously during the button click event
+      await playChord(chord.notes, settings.countdownDuration);
     }
 
     setGameState({
@@ -146,11 +149,13 @@ function App() {
    *
    * Plays the chord sound when a new chord appears and playSound is enabled
    * Depends on chordChangeCount to trigger even when same chord repeats (single chord mode)
+   * NOTE: Skips first chord (count === 1) since it's played in handleStart for iOS compatibility
    * NOTE: Only depends on chordChangeCount and playSound - NOT on isPaused/isPlaying
    * This prevents sound from playing when resuming from pause
    */
   useEffect(() => {
-    if (gameState.currentChord && settings.playSound && gameState.isPlaying && !gameState.isPaused && gameState.chordChangeCount > 0) {
+    // Skip first chord (already played in handleStart for iOS audio unlock)
+    if (gameState.currentChord && settings.playSound && gameState.isPlaying && !gameState.isPaused && gameState.chordChangeCount > 1) {
       playChord(gameState.currentChord.notes, settings.countdownDuration);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
