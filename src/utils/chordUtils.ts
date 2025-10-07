@@ -3,10 +3,21 @@ import { CHORDS, NOTE_TRANSLATIONS, CHORD_TYPE_NAMES } from '../data/chords';
 
 /**
  * Get a random chord from the pool based on game settings
+ * Excludes the previous chord to prevent repetition
  */
-export const getRandomChord = (settings: GameSettings): Chord | null => {
-  const availableChords = getAvailableChords(settings);
+export const getRandomChord = (settings: GameSettings, excludeChord?: Chord | null): Chord | null => {
+  let availableChords = getAvailableChords(settings);
 
+  if (availableChords.length === 0) {
+    return null;
+  }
+
+  // Exclude the previous chord if provided (prevent same chord twice in a row)
+  if (excludeChord && availableChords.length > 1) {
+    availableChords = availableChords.filter((chord) => chord.id !== excludeChord.id);
+  }
+
+  // If no chords left after filtering, return null
   if (availableChords.length === 0) {
     return null;
   }

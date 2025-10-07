@@ -6,11 +6,19 @@ A beautiful, interactive piano chord practice application built with React, Type
 
 - **Timer-Based Practice**: Configurable countdown timer (1-10 seconds) for each chord
 - **Visual Piano Keyboard**: Interactive SVG piano keyboard with green chord highlighting
+  - Middle C positioned at the center of the keyboard
+  - Right hand notes (octave 4) highlighted on the RIGHT side of middle C
   - All chord notes highlighted in the same color for clarity
-  - 2-octave keyboard range
+  - 2-octave keyboard range (C3-C5) for visual reference
+- **Piano Sound Playback**: Hear each chord played automatically when it appears
+  - Beautiful sound icon button to easily mute/unmute (speaker icon with sound waves)
+  - Mobile-friendly large button with clear visual states (blue when on, gray when off)
+  - Real piano samples (Salamander Grand Piano) using Tone.js
+  - Sound stops immediately when pausing or stopping practice
+  - Works correctly even when practicing a single chord repeatedly
 - **Bilingual Support**: Switch between English and French notation (C, D, E vs Do, Ré, Mi)
 - **Multiple Practice Modes**:
-  - **Learn All**: Practice all available chords randomly
+  - **Learn All**: Practice all available chords randomly (never shows the same chord twice in a row)
   - **Learn Selected**: Choose specific chords to practice
 - **Customizable Filters**:
   - Chord types (Major, Minor, or both)
@@ -18,11 +26,20 @@ A beautiful, interactive piano chord practice application built with React, Type
 - **Visual Feedback**:
   - Chord name and timer displayed side-by-side for optimal space
   - Circular countdown timer with color-coded warnings (blue → orange → red)
-  - Chord difficulty badges
-  - **Research-based popularity ratings** (1-5 stars based on 1,300+ song analysis)
+  - Chord difficulty badges (blue background)
+  - **Prominent popularity ratings** (yellow badge with 1-5 stars, displayed next to difficulty during gameplay, based on 1,300+ song analysis)
 - **Stable Layout**: No jumping or shifting when starting, stopping, or pausing
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
 - **Modern UI**: Clean, professional interface with smooth animations
+
+## Key Technical Features
+
+- **Smart Chord Rotation**: Never shows the same chord twice in a row (unless only one chord is selected)
+- **Right Hand Focus**: Visual keyboard highlights only show notes for right hand (octave 4), positioned on the right side of middle C
+- **Enharmonic Note Matching**: Correctly highlights chords with flats (Eb, Bb, Ab) even though keyboard shows sharps (D#, A#, G#)
+- **Instant Sound Control**: Pause and Stop buttons immediately silence any playing sounds
+- **Single Chord Mode**: Sound plays correctly each time even when practicing just one chord
+- **Optimized Performance**: Lazy-loaded piano samples with proper async handling
 
 ## Getting Started
 
@@ -104,6 +121,7 @@ Just build the project and upload the `dist` folder.
    - Set difficulty level
    - Adjust countdown duration
    - Toggle chord highlighting on keyboard
+   - Tap the sound button to mute/unmute piano playback (with speaker icon)
 
 2. **Select Chords** (if using "Learn Selected" mode):
    - Click "Select Chords" button
@@ -122,16 +140,17 @@ Just build the project and upload the `dist` folder.
 ```
 src/
 ├── components/
-│   ├── ChordDisplay.tsx    # Chord name and timer display
-│   ├── ChordSelector.tsx   # Chord selection modal
-│   ├── PianoKeyboard.tsx   # SVG piano keyboard
-│   └── Settings.tsx        # Settings panel
+│   ├── ChordDisplay.tsx    # Chord name, timer, and metadata display
+│   ├── ChordSelector.tsx   # Chord selection modal interface
+│   ├── PianoKeyboard.tsx   # SVG piano keyboard with highlighting
+│   └── Settings.tsx        # Settings panel with all controls
 ├── data/
-│   └── chords.ts          # Chord data and translations
+│   └── chords.ts          # Chord database (24 chords) and translations
 ├── utils/
-│   └── chordUtils.ts      # Chord filtering and selection logic
+│   ├── chordUtils.ts      # Chord filtering and random selection logic
+│   └── soundUtils.ts      # Piano sound playback with Tone.js
 ├── types.ts               # TypeScript type definitions
-└── App.tsx                # Main application component
+└── App.tsx                # Main application component with game logic
 ```
 
 ## Chord Library
@@ -139,7 +158,7 @@ src/
 The app includes **all 24 major and minor chords** (12 major + 12 minor) across all keys:
 - **Beginner** (10 chords): C, G, F, D, A, E major + A, D, E, C minor
 - **Intermediate** (9 chords): B, Bb, Eb, Ab, Db major + F, G, B, Bb minor
-- **Advanced** (8 chords): Gb, C#, F# major + C#, F#, G#, Eb, Ab minor
+- **Advanced** (5 chords): F# major + C#, F#, G#, Eb minor
 
 ### Popularity Ratings
 
@@ -147,9 +166,9 @@ Chord popularity ratings are based on **real-world music analysis** of 1,300+ po
 
 - **5 stars**: C, G, F major + A, D, E minor (most common - the "Big Four" + natural keys)
 - **4 stars**: D, A, E major + C minor, Bb major, G, B minor (common in pop/jazz)
-- **3 stars**: Eb major, F, C#, F# minor (moderate usage)
+- **3 stars**: Eb, F major + F, C#, F# minor (moderate usage)
 - **2 stars**: Ab, Db, B major + Bb, G#, F# minor (less common - more accidentals)
-- **1 star**: Gb, C# major + Eb, Ab minor (rare - many accidentals)
+- **1 star**: Eb minor (rare - 6 flats)
 
 Each chord includes:
 - Root note
@@ -165,6 +184,7 @@ Each chord includes:
 - **Tailwind CSS v4**: Modern utility-first CSS
 - **Vite**: Lightning-fast build tool
 - **PostCSS**: CSS processing
+- **Tone.js**: Web Audio framework for piano sound synthesis
 
 ## License
 
@@ -180,12 +200,12 @@ Contributions are welcome! Feel free to:
 ## Future Enhancements
 
 Potential features for future versions:
-- Sound playback for chords
 - Progress tracking and statistics
 - More chord types (7th, 9th, diminished, augmented)
 - MIDI keyboard input support
 - Custom chord sets
 - Practice session history
+- Adjustable sound settings (volume, instrument type)
 
 ---
 

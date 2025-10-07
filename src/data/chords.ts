@@ -1,13 +1,17 @@
 /**
  * Chord Database
  *
- * Contains all available piano chords for practice.
- * Total: 27 chords (10 beginner, 9 intermediate, 8 advanced)
+ * Contains ALL 24 major and minor piano chords (12 major + 12 minor).
+ * One chord for each of the 12 chromatic notes.
+ * Total: 24 chords (10 beginner, 9 intermediate, 5 advanced)
  *
- * To add more chords:
+ * Note: Enharmonic equivalents (e.g., F#/Gb, C#/Db) are represented by
+ * the most commonly used notation for each chord type.
+ *
+ * To add more chord types (7th, 9th, etc.):
  * 1. Add to this array with all required properties
  * 2. Add note translations to NOTE_TRANSLATIONS if needed
- * 3. Consider adding new ChordType if it's a new type (e.g., 7th chords)
+ * 3. Add new ChordType to types.ts
  */
 
 import type { Chord } from '../types';
@@ -175,28 +179,12 @@ export const CHORDS: Chord[] = [
 
   // ADVANCED - MAJOR CHORDS
   {
-    id: 'Gb-major',
-    root: 'Gb',
-    type: 'major',
-    notes: ['Gb', 'Bb', 'Db'],
-    difficulty: 'advanced',
-    popularity: 1, // 6 flats - very rare
-  },
-  {
-    id: 'C#-major',
-    root: 'C#',
-    type: 'major',
-    notes: ['C#', 'E#', 'G#'],
-    difficulty: 'advanced',
-    popularity: 1, // 7 sharps - extremely rare
-  },
-  {
     id: 'F#-major',
     root: 'F#',
     type: 'major',
     notes: ['F#', 'A#', 'C#'],
     difficulty: 'advanced',
-    popularity: 2, // 6 sharps - rare but more than C#
+    popularity: 2, // 6 sharps - rare
   },
 
   // ADVANCED - MINOR CHORDS
@@ -231,14 +219,6 @@ export const CHORDS: Chord[] = [
     notes: ['Eb', 'Gb', 'Bb'],
     difficulty: 'advanced',
     popularity: 1, // 6 flats - very rare
-  },
-  {
-    id: 'Ab-minor',
-    root: 'Ab',
-    type: 'minor',
-    notes: ['Ab', 'Cb', 'Eb'],
-    difficulty: 'advanced',
-    popularity: 1, // 7 flats - extremely rare
   },
 ];
 

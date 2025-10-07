@@ -3,36 +3,38 @@ interface PianoKeyboardProps {
   showHighlight?: boolean;
 }
 
-// Define the piano keys for 2 octaves (C4 to C6)
+// Define the piano keys with Middle C (C4) in the CENTER
+// Layout: Octave 3 (left hand) | Middle C (C4) - center | Rest of Octave 4 (right hand)
+// This visually shows right hand position on the RIGHT side of the keyboard
 const PIANO_KEYS = [
-  // Octave 4
-  { note: 'C', isBlack: false, x: 0 },
-  { note: 'C#', isBlack: true, x: 35 },
-  { note: 'D', isBlack: false, x: 50 },
-  { note: 'D#', isBlack: true, x: 85 },
-  { note: 'E', isBlack: false, x: 100 },
-  { note: 'F', isBlack: false, x: 150 },
-  { note: 'F#', isBlack: true, x: 185 },
-  { note: 'G', isBlack: false, x: 200 },
-  { note: 'G#', isBlack: true, x: 235 },
-  { note: 'A', isBlack: false, x: 250 },
-  { note: 'A#', isBlack: true, x: 285 },
-  { note: 'B', isBlack: false, x: 300 },
-  // Octave 5
-  { note: 'C', isBlack: false, x: 350 },
-  { note: 'C#', isBlack: true, x: 385 },
-  { note: 'D', isBlack: false, x: 400 },
-  { note: 'D#', isBlack: true, x: 435 },
-  { note: 'E', isBlack: false, x: 450 },
-  { note: 'F', isBlack: false, x: 500 },
-  { note: 'F#', isBlack: true, x: 535 },
-  { note: 'G', isBlack: false, x: 550 },
-  { note: 'G#', isBlack: true, x: 585 },
-  { note: 'A', isBlack: false, x: 600 },
-  { note: 'A#', isBlack: true, x: 635 },
-  { note: 'B', isBlack: false, x: 650 },
-  // Octave 6 (just C)
-  { note: 'C', isBlack: false, x: 700 },
+  // Octave 3 - LEFT HAND RANGE (not highlighted)
+  { note: 'C', isBlack: false, x: 0, octave: 3 },
+  { note: 'C#', isBlack: true, x: 35, octave: 3 },
+  { note: 'D', isBlack: false, x: 50, octave: 3 },
+  { note: 'D#', isBlack: true, x: 85, octave: 3 },
+  { note: 'E', isBlack: false, x: 100, octave: 3 },
+  { note: 'F', isBlack: false, x: 150, octave: 3 },
+  { note: 'F#', isBlack: true, x: 185, octave: 3 },
+  { note: 'G', isBlack: false, x: 200, octave: 3 },
+  { note: 'G#', isBlack: true, x: 235, octave: 3 },
+  { note: 'A', isBlack: false, x: 250, octave: 3 },
+  { note: 'A#', isBlack: true, x: 285, octave: 3 },
+  { note: 'B', isBlack: false, x: 300, octave: 3 },
+  // Octave 4 - RIGHT HAND RANGE (highlighted) - starts at center
+  { note: 'C', isBlack: false, x: 350, octave: 4 }, // MIDDLE C - CENTER
+  { note: 'C#', isBlack: true, x: 385, octave: 4 },
+  { note: 'D', isBlack: false, x: 400, octave: 4 },
+  { note: 'D#', isBlack: true, x: 435, octave: 4 },
+  { note: 'E', isBlack: false, x: 450, octave: 4 },
+  { note: 'F', isBlack: false, x: 500, octave: 4 },
+  { note: 'F#', isBlack: true, x: 535, octave: 4 },
+  { note: 'G', isBlack: false, x: 550, octave: 4 },
+  { note: 'G#', isBlack: true, x: 585, octave: 4 },
+  { note: 'A', isBlack: false, x: 600, octave: 4 },
+  { note: 'A#', isBlack: true, x: 635, octave: 4 },
+  { note: 'B', isBlack: false, x: 650, octave: 4 },
+  // Octave 5 (just C for reference)
+  { note: 'C', isBlack: false, x: 700, octave: 5 },
 ];
 
 const WHITE_KEY_WIDTH = 50;
@@ -51,13 +53,45 @@ export const PianoKeyboard: React.FC<PianoKeyboardProps> = ({
 
   const normalizedHighlightedNotes = highlightedNotes.map(normalizeNote);
 
-  const isHighlighted = (note: string) => {
+  /**
+   * Check if two notes are enharmonic equivalents
+   * E.g., Eb = D#, Bb = A#, etc.
+   */
+  const areEnharmonic = (note1: string, note2: string) => {
+    // Direct match
+    if (note1 === note2) return true;
+
+    // Enharmonic equivalents map
+    const enharmonicMap: { [key: string]: string } = {
+      'C#': 'Db', 'Db': 'C#',
+      'D#': 'Eb', 'Eb': 'D#',
+      'E#': 'F', 'F': 'E#',
+      'F#': 'Gb', 'Gb': 'F#',
+      'G#': 'Ab', 'Ab': 'G#',
+      'A#': 'Bb', 'Bb': 'A#',
+      'B#': 'C', 'C': 'B#',
+      'Cb': 'B', 'B': 'Cb',
+    };
+
+    return enharmonicMap[note1] === note2;
+  };
+
+  /**
+   * Check if a note should be highlighted
+   * Only highlights notes in octave 4 (right hand playing position)
+   * This helps learners focus on the correct hand position for playing chords
+   */
+  const isHighlighted = (note: string, octave: number) => {
+    // Only highlight if in octave 4 (right hand - middle C range)
+    if (octave !== 4) {
+      return false;
+    }
+
     const normalized = normalizeNote(note);
-    // Check if the note (without accidentals) or with sharp/flat is in the highlighted list
-    return (
-      normalizedHighlightedNotes.includes(normalized) ||
-      normalizedHighlightedNotes.includes(normalized.replace('b', '#')) ||
-      normalizedHighlightedNotes.includes(normalized.replace('#', 'b'))
+
+    // Check if the key note matches any highlighted note (including enharmonic equivalents)
+    return normalizedHighlightedNotes.some(highlightedNote =>
+      areEnharmonic(normalized, highlightedNote)
     );
   };
 
@@ -73,9 +107,9 @@ export const PianoKeyboard: React.FC<PianoKeyboardProps> = ({
       >
         {/* White keys */}
         {whiteKeys.map((key, index) => {
-          const highlighted = showHighlight && isHighlighted(key.note);
+          const highlighted = showHighlight && isHighlighted(key.note, key.octave);
           return (
-            <g key={`white-${key.note}-${index}`}>
+            <g key={`white-${key.note}-${key.octave}-${index}`}>
               <rect
                 x={key.x}
                 y="0"
@@ -100,9 +134,9 @@ export const PianoKeyboard: React.FC<PianoKeyboardProps> = ({
 
         {/* Black keys - drawn on top */}
         {blackKeys.map((key, index) => {
-          const highlighted = showHighlight && isHighlighted(key.note);
+          const highlighted = showHighlight && isHighlighted(key.note, key.octave);
           return (
-            <g key={`black-${key.note}-${index}`}>
+            <g key={`black-${key.note}-${key.octave}-${index}`}>
               <rect
                 x={key.x}
                 y="0"

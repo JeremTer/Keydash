@@ -8,6 +8,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { GameSettings, GameState, Chord } from './types';
 import { getRandomChord } from './utils/chordUtils';
+import { playChord, preloadSamples, stopAllSounds } from './utils/soundUtils';
 import { ChordDisplay } from './components/ChordDisplay';
 import { PianoKeyboard } from './components/PianoKeyboard';
 import { Settings } from './components/Settings';
@@ -20,6 +21,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   difficulty: 'all',
   countdownDuration: 5,
   showChordOnKeyboard: true,
+  playSound: true,
   selectedChords: [],
   mode: 'all',
 };
@@ -31,16 +33,17 @@ function App() {
     isPaused: false,
     currentChord: null,
     timeRemaining: 0,
+    chordChangeCount: 0,
   });
   const [showChordSelector, setShowChordSelector] = useState(false);
 
-  // Get a new random chord
+  // Get a new random chord (excluding the current one to prevent repetition)
   const getNextChord = useCallback((): Chord | null => {
-    return getRandomChord(settings);
-  }, [settings]);
+    return getRandomChord(settings, gameState.currentChord);
+  }, [settings, gameState.currentChord]);
 
   // Start game
-  const handleStart = () => {
+  const handleStart = async () => {
     const chord = getNextChord();
     if (!chord) {
       alert(
@@ -51,16 +54,25 @@ function App() {
       return;
     }
 
+    // Preload piano samples if sound is enabled (ensures first chord plays correctly)
+    if (settings.playSound) {
+      await preloadSamples();
+    }
+
     setGameState({
       isPlaying: true,
       isPaused: false,
       currentChord: chord,
       timeRemaining: settings.countdownDuration,
+      chordChangeCount: 1, // Start at 1
     });
   };
 
   // Pause game
   const handlePause = () => {
+    // Stop any playing sounds immediately when pausing
+    stopAllSounds();
+
     setGameState((prev) => ({
       ...prev,
       isPaused: !prev.isPaused,
@@ -69,11 +81,15 @@ function App() {
 
   // Stop game
   const handleStop = () => {
+    // Stop any playing sounds
+    stopAllSounds();
+
     setGameState({
       isPlaying: false,
       isPaused: false,
       currentChord: null,
       timeRemaining: 0,
+      chordChangeCount: 0,
     });
   };
 
@@ -103,6 +119,7 @@ function App() {
               isPaused: false,
               currentChord: null,
               timeRemaining: 0,
+              chordChangeCount: 0,
             };
           }
 
@@ -110,6 +127,7 @@ function App() {
             ...prev,
             currentChord: nextChord,
             timeRemaining: settings.countdownDuration,
+            chordChangeCount: prev.chordChangeCount + 1, // Increment to trigger sound
           };
         }
 
@@ -122,6 +140,21 @@ function App() {
 
     return () => clearInterval(interval);
   }, [gameState.isPlaying, gameState.isPaused, settings.countdownDuration, getNextChord]);
+
+  /**
+   * Sound Playback Logic
+   *
+   * Plays the chord sound when a new chord appears and playSound is enabled
+   * Depends on chordChangeCount to trigger even when same chord repeats (single chord mode)
+   * NOTE: Only depends on chordChangeCount and playSound - NOT on isPaused/isPlaying
+   * This prevents sound from playing when resuming from pause
+   */
+  useEffect(() => {
+    if (gameState.currentChord && settings.playSound && gameState.isPlaying && !gameState.isPaused && gameState.chordChangeCount > 0) {
+      playChord(gameState.currentChord.notes);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameState.chordChangeCount, settings.playSound]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">

@@ -25,6 +25,7 @@ export interface GameSettings {
   difficulty: Difficulty | 'all';
   countdownDuration: number; // seconds
   showChordOnKeyboard: boolean;
+  playSound: boolean; // Play piano sound when chord appears
   selectedChords: string[]; // Chord IDs for "Learn Selected" mode
   mode: 'all' | 'selected';
 }
@@ -34,4 +35,5 @@ export interface GameState {
   isPaused: boolean;
   currentChord: Chord | null;
   timeRemaining: number;
+  chordChangeCount: number; // Increments each time chord changes (for sound triggering)
 }
