@@ -36,6 +36,7 @@ function App() {
     chordChangeCount: 0,
   });
   const [showChordSelector, setShowChordSelector] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   // Get a new random chord (excluding the current one to prevent repetition)
   const getNextChord = useCallback((): Chord | null => {
@@ -165,7 +166,27 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="relative text-center mb-8">
+          {/* Settings Toggle Button - Mobile friendly with larger touch target */}
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="absolute left-0 top-0 p-3 md:p-3 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all active:scale-95"
+            aria-label={settings.language === 'en' ? 'Toggle Settings' : 'Afficher/Masquer Paramètres'}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-7 h-7 md:w-6 md:h-6 text-gray-700 dark:text-gray-300"
+            >
+              <path
+                fillRule="evenodd"
+                d="M11.828 2.25c-.916 0-1.699.663-1.85 1.567l-.091.549a.798.798 0 01-.517.608 7.45 7.45 0 00-.478.198.798.798 0 01-.796-.064l-.453-.324a1.875 1.875 0 00-2.416.2l-.243.243a1.875 1.875 0 00-.2 2.416l.324.453a.798.798 0 01.064.796 7.448 7.448 0 00-.198.478.798.798 0 01-.608.517l-.55.092a1.875 1.875 0 00-1.566 1.849v.344c0 .916.663 1.699 1.567 1.85l.549.091c.281.047.508.25.608.517.06.162.127.321.198.478a.798.798 0 01-.064.796l-.324.453a1.875 1.875 0 00.2 2.416l.243.243c.648.648 1.67.733 2.416.2l.453-.324a.798.798 0 01.796-.064c.157.071.316.137.478.198.267.1.47.327.517.608l.092.55c.15.903.932 1.566 1.849 1.566h.344c.916 0 1.699-.663 1.85-1.567l.091-.549a.798.798 0 01.517-.608 7.52 7.52 0 00.478-.198.798.798 0 01.796.064l.453.324a1.875 1.875 0 002.416-.2l.243-.243c.648-.648.733-1.67.2-2.416l-.324-.453a.798.798 0 01-.064-.796c.071-.157.137-.316.198-.478.1-.267.327-.47.608-.517l.55-.091a1.875 1.875 0 001.566-1.85v-.344c0-.916-.663-1.699-1.567-1.85l-.549-.091a.798.798 0 01-.608-.517 7.507 7.507 0 00-.198-.478.798.798 0 01.064-.796l.324-.453a1.875 1.875 0 00-.2-2.416l-.243-.243a1.875 1.875 0 00-2.416-.2l-.453.324a.798.798 0 01-.796.064 7.462 7.462 0 00-.478-.198.798.798 0 01-.517-.608l-.091-.55a1.875 1.875 0 00-1.85-1.566h-.344zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-2">
             🎹 Keydash
           </h1>
@@ -177,30 +198,32 @@ function App() {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Settings */}
-          <div className="lg:col-span-1">
-            <Settings
-              settings={settings}
-              onSettingsChange={setSettings}
-              disabled={gameState.isPlaying}
-            />
-
-            {/* Chord Selection Button */}
-            {settings.mode === 'selected' && (
-              <button
-                onClick={() => setShowChordSelector(true)}
+        <div className={`grid grid-cols-1 ${showSettings ? 'lg:grid-cols-3' : ''} gap-6`}>
+          {/* Left Column - Settings (conditionally shown) */}
+          {showSettings && (
+            <div className="lg:col-span-1">
+              <Settings
+                settings={settings}
+                onSettingsChange={setSettings}
                 disabled={gameState.isPlaying}
-                className="w-full mt-4 px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-              >
-                {settings.language === 'en' ? 'Select Chords' : 'Sélectionner les accords'} (
-                {settings.selectedChords.length})
-              </button>
-            )}
-          </div>
+              />
 
-          {/* Right Column - Game Area */}
-          <div className="lg:col-span-2 space-y-6">
+              {/* Chord Selection Button */}
+              {settings.mode === 'selected' && (
+                <button
+                  onClick={() => setShowChordSelector(true)}
+                  disabled={gameState.isPlaying}
+                  className="w-full mt-4 px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                >
+                  {settings.language === 'en' ? 'Select Chords' : 'Sélectionner les accords'} (
+                  {settings.selectedChords.length})
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Right Column - Game Area (full width when settings hidden) */}
+          <div className={`space-y-6 ${showSettings ? 'lg:col-span-2' : ''}`}>
             {/* Chord Display & Timer */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
               <ChordDisplay
