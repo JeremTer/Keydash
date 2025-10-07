@@ -6,7 +6,6 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import * as Tone from 'tone';
 import type { GameSettings, GameState, Chord } from './types';
 import { getRandomChord } from './utils/chordUtils';
 import { playChord, preloadSamples, stopAllSounds } from './utils/soundUtils';
@@ -38,33 +37,6 @@ function App() {
   });
   const [showChordSelector, setShowChordSelector] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [samplesPreloaded, setSamplesPreloaded] = useState(false);
-
-  // Preload audio samples on first user interaction (critical for iOS)
-  useEffect(() => {
-    const preloadOnFirstInteraction = async () => {
-      if (!samplesPreloaded && settings.playSound) {
-        await preloadSamples();
-        setSamplesPreloaded(true);
-      }
-    };
-
-    // Preload on any user interaction
-    const handleInteraction = () => {
-      preloadOnFirstInteraction();
-      // Remove listeners after first interaction
-      document.removeEventListener('touchstart', handleInteraction);
-      document.removeEventListener('click', handleInteraction);
-    };
-
-    document.addEventListener('touchstart', handleInteraction, { once: true });
-    document.addEventListener('click', handleInteraction, { once: true });
-
-    return () => {
-      document.removeEventListener('touchstart', handleInteraction);
-      document.removeEventListener('click', handleInteraction);
-    };
-  }, [samplesPreloaded, settings.playSound]);
 
   // Get a new random chord (excluding the current one to prevent repetition)
   const getNextChord = useCallback((): Chord | null => {
@@ -83,17 +55,9 @@ function App() {
       return;
     }
 
-    // For iOS Safari: Start audio context and play immediately
-    // Samples are already preloaded from first user interaction
+    // Preload piano samples if sound is enabled
     if (settings.playSound) {
-      // Unlock and resume audio context (synchronous calls)
-      Tone.start();
-      if (Tone.context.state === 'suspended') {
-        Tone.context.resume();
-      }
-
-      // Play first chord immediately (samples already loaded)
-      playChord(chord.notes, settings.countdownDuration);
+      await preloadSamples();
     }
 
     setGameState({
@@ -183,13 +147,11 @@ function App() {
    *
    * Plays the chord sound when a new chord appears and playSound is enabled
    * Depends on chordChangeCount to trigger even when same chord repeats (single chord mode)
-   * NOTE: Skips first chord (count === 1) since it's played in handleStart for iOS compatibility
    * NOTE: Only depends on chordChangeCount and playSound - NOT on isPaused/isPlaying
    * This prevents sound from playing when resuming from pause
    */
   useEffect(() => {
-    // Skip first chord (already played in handleStart for iOS audio unlock)
-    if (gameState.currentChord && settings.playSound && gameState.isPlaying && !gameState.isPaused && gameState.chordChangeCount > 1) {
+    if (gameState.currentChord && settings.playSound && gameState.isPlaying && !gameState.isPaused && gameState.chordChangeCount > 0) {
       playChord(gameState.currentChord.notes, settings.countdownDuration);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
