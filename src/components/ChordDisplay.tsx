@@ -28,19 +28,6 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2">
                 {getChordName(chord, language)}
               </h1>
-              <div className="flex items-center justify-center md:justify-start space-x-2 md:space-x-3 text-xs md:text-sm flex-wrap gap-y-1">
-                <span className="px-2 md:px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded font-medium">
-                  {chord.difficulty.charAt(0).toUpperCase() + chord.difficulty.slice(1)}
-                </span>
-                <span className="px-2 md:px-3 py-1 bg-yellow-100 dark:bg-yellow-900 rounded font-medium flex items-center gap-1">
-                  <span className="text-yellow-700 dark:text-yellow-300 text-xs font-semibold">
-                    {language === 'en' ? 'Pop' : 'Pop'}:
-                  </span>
-                  <span className="text-yellow-600 dark:text-yellow-400 text-sm md:text-base">
-                    {'★'.repeat(chord.popularity)}{'☆'.repeat(5 - chord.popularity)}
-                  </span>
-                </span>
-              </div>
             </>
           ) : (
             <h1 className="text-2xl md:text-4xl font-bold text-gray-400">

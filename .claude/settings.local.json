@@ -5,7 +5,8 @@
       "Bash(npm install:*)",
       "WebSearch",
       "Bash(git add:*)",
-      "Bash(git rev-list:*)"
+      "Bash(git rev-list:*)",
+      "WebFetch(domain:www.piano-keyboard-guide.com)"
     ],
     "deny": [],
     "ask": []

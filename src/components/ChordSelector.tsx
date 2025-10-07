@@ -53,9 +53,6 @@ export const ChordSelector: React.FC<ChordSelectorProps> = ({
       >
         <div className="flex flex-col items-center">
           <span>{getChordName(chord, language)}</span>
-          <span className="text-xs text-yellow-400 mt-1">
-            {'★'.repeat(chord.popularity)}
-          </span>
         </div>
       </button>
     );

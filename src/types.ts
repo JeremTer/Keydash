@@ -17,7 +17,6 @@ export interface Chord {
   notes: string[]; // Array of note names (e.g., ["C", "E", "G"])
   fingering: number[]; // Right hand finger numbers (1=thumb, 2=index, 3=middle, 4=ring, 5=pinky)
   difficulty: Difficulty;
-  popularity: number; // 1-5, where 5 is most popular
 }
 
 export interface GameSettings {
