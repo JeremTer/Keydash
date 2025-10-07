@@ -1,4 +1,4 @@
-import type { GameSettings, ChordType, Difficulty } from '../types';
+import type { GameSettings, ChordType } from '../types';
 
 interface SettingsProps {
   settings: GameSettings;
@@ -26,13 +26,6 @@ export const Settings: React.FC<SettingsProps> = ({
     onSettingsChange({
       ...settings,
       chordTypes: newTypes,
-    });
-  };
-
-  const handleDifficultyChange = (difficulty: Difficulty | 'all') => {
-    onSettingsChange({
-      ...settings,
-      difficulty,
     });
   };
 
@@ -160,33 +153,6 @@ export const Settings: React.FC<SettingsProps> = ({
           >
             {settings.language === 'en' ? 'Minor' : 'Mineur'}
           </button>
-        </div>
-      </div>
-
-      {/* Difficulty */}
-      <div>
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block mb-2">
-          {settings.language === 'en' ? 'Difficulty' : 'Difficulté'}
-        </label>
-        <div className="grid grid-cols-2 gap-2">
-          {(['all', 'beginner', 'intermediate', 'advanced'] as const).map((diff) => (
-            <button
-              key={diff}
-              onClick={() => handleDifficultyChange(diff)}
-              disabled={disabled}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                settings.difficulty === diff
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
-            >
-              {diff === 'all'
-                ? settings.language === 'en'
-                  ? 'All'
-                  : 'Tous'
-                : diff.charAt(0).toUpperCase() + diff.slice(1)}
-            </button>
-          ))}
         </div>
       </div>
 
