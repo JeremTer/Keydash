@@ -31,6 +31,7 @@ A beautiful, interactive piano chord practice application built with React, Type
   - Difficulty levels (Beginner, Intermediate, Advanced, or all)
 - **Visual Feedback**:
   - Chord name displayed prominently (centered in Beginner mode, left-aligned in Speed mode)
+  - **Note names displayed below chord name** when revealed (e.g., "C - E - G")
   - Circular countdown timer with color-coded warnings (blue → orange → red) - Speed Practice mode only
   - Clean, distraction-free interface
 - **Stable Layout**: No jumping or shifting when starting, stopping, or pausing

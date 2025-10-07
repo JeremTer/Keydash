@@ -166,6 +166,10 @@ const handleNext = () => {
 
 **Key Features:**
 - Shows chord name in selected language (en/fr)
+- **Displays note names below chord name** when revealed (e.g., "C - E - G")
+  - Note names extracted from chord notes without octave numbers
+  - Visibility synchronized with keyboard highlighting
+  - Works in both Speed and Beginner modes
 - **Conditional timer display**: Only shown in Speed Practice mode
 - Circular SVG countdown timer (120px diameter) - Speed mode only
 - Color-coded warnings (blue → orange → red)
@@ -174,14 +178,36 @@ const handleNext = () => {
   - Beginner mode: Centered chord name only
 - **Fixed height to prevent layout shifts** when starting/stopping
 
+**Note Names Display Logic:**
+```typescript
+// Extract note names without octave numbers (e.g., "C4" -> "C", "D#5" -> "D#")
+const getNoteNames = (notes: string[]) => {
+  return notes.map(note => note.replace(/\d+$/, '')).join(' - ');
+};
+
+// Display note names when chord is revealed
+{showNotes && (
+  <p className="text-lg md:text-2xl text-gray-600 dark:text-gray-400 font-medium">
+    {getNoteNames(chord.notes)}
+  </p>
+)}
+```
+
 **Layout Stability:**
 ```typescript
 // Main container with fixed minimum height
 <div className="py-4 px-4 min-h-[140px]">
   <div className="flex items-center justify-between">
-    // Chord name - centered in beginner mode, left-aligned in speed mode
+    // Chord name + note names - centered in beginner mode, left-aligned in speed mode
     <div className={`flex-1 ${gameMode === 'speed' ? 'text-center md:text-left' : 'text-center'}`}>
-      {chord ? <ChordName /> : <StartMessage />}
+      {chord ? (
+        <>
+          <ChordName />
+          {showNotes && <NoteNames />}
+        </>
+      ) : (
+        <StartMessage />
+      )}
     </div>
     // Timer only shown in speed mode
     {gameMode === 'speed' && (

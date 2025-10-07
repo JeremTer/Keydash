@@ -14,6 +14,7 @@ interface ChordDisplayProps {
   totalTime: number;
   language: 'en' | 'fr';
   gameMode?: GameMode; // Determines layout and timer visibility
+  showNotes?: boolean; // Whether to display the note names
 }
 
 export const ChordDisplay: React.FC<ChordDisplayProps> = ({
@@ -22,10 +23,16 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
   totalTime,
   language,
   gameMode = 'speed',
+  showNotes = false,
 }) => {
   const percentage = totalTime > 0 ? (timeRemaining / totalTime) * 100 : 0;
   const isWarning = percentage < 30;
   const isDanger = percentage < 15;
+
+  // Extract note names without octave numbers (e.g., "C4" -> "C", "D#5" -> "D#")
+  const getNoteNames = (notes: string[]) => {
+    return notes.map(note => note.replace(/\d+$/, '')).join(' - ');
+  };
 
   return (
     <div className="py-4 px-4 min-h-[140px]">
@@ -37,6 +44,11 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2">
                 {getChordName(chord, language)}
               </h1>
+              {showNotes && (
+                <p className="text-lg md:text-2xl text-gray-600 dark:text-gray-400 font-medium">
+                  {getNoteNames(chord.notes)}
+                </p>
+              )}
             </>
           ) : (
             <h1 className="text-2xl md:text-4xl font-bold text-gray-400">

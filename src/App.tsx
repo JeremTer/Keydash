@@ -290,6 +290,12 @@ function App() {
                 totalTime={settings.countdownDuration}
                 language={settings.language}
                 gameMode={settings.gameMode}
+                showNotes={
+                  gameState.isPlaying &&
+                  (settings.gameMode === 'speed'
+                    ? settings.showChordOnKeyboard
+                    : gameState.isRevealed)
+                }
               />
             </div>
 
