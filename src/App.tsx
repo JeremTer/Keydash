@@ -162,7 +162,7 @@ function App() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-2">
-            🎹 {settings.language === 'en' ? 'Piano Chord Practice' : 'Pratique des Accords Piano'}
+            🎹 Keydash
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
             {settings.language === 'en'
