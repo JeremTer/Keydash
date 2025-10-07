@@ -25,7 +25,8 @@ This is a single-page React application built with modern frontend technologies.
 │   ├── data/
 │   │   └── chords.ts       # Chord database and translations
 │   ├── utils/
-│   │   └── chordUtils.ts   # Pure utility functions
+│   │   ├── chordUtils.ts   # Pure utility functions
+│   │   └── soundUtils.ts   # Piano sound playback with Tone.js
 │   ├── types.ts            # TypeScript type definitions
 │   ├── App.tsx             # Main app component (state management)
 │   ├── main.tsx            # React app entry point
@@ -454,6 +455,82 @@ export const getAvailableChords = (settings: GameSettings): Chord[] => {
 
 ---
 
+### utils/soundUtils.ts - Piano Sound Playback
+
+**Key Functions:**
+
+```typescript
+// Play chord with configurable duration
+export const playChord = async (notes: string[], duration: number = 2): Promise<void>
+
+// Preload piano samples (called on Start button)
+export const preloadSamples = async (): Promise<void>
+
+// Stop all playing sounds immediately
+export const stopAllSounds = (): void
+```
+
+**Implementation Details:**
+
+**Piano Sample Loading:**
+- Uses Tone.js Sampler with Salamander Grand Piano samples
+- Lazy-loaded on first use (not on page load)
+- Samples hosted on CDN: `https://tonejs.github.io/audio/salamander/`
+- 28 samples across the piano range (A0 to C8)
+
+**Mobile Browser Support:**
+```typescript
+// Critical for iOS Safari
+await Tone.start();
+if (Tone.context.state === 'suspended') {
+  await Tone.context.resume();
+}
+```
+
+**Why this is needed:**
+- iOS Safari blocks audio by default until user interaction
+- Audio context starts in "suspended" state
+- Must resume context on user action (e.g., Start button click)
+
+**Duration Matching:**
+```typescript
+export const playChord = async (notes: string[], duration: number = 2) => {
+  // Convert to milliseconds
+  const durationMs = duration * 1000;
+
+  // Trigger attack (start sound)
+  sampler.triggerAttack(notes);
+
+  // Schedule release after duration
+  setTimeout(() => {
+    sampler.triggerRelease(notes);
+  }, durationMs);
+}
+```
+
+**Benefits:**
+- Sound duration matches user's countdown timer setting
+- No hardcoded 2-second duration
+- Better user experience - consistent timing
+
+**Retry Logic for Loading:**
+```typescript
+if (loadedSampler.loaded) {
+  // Play immediately
+  loadedSampler.triggerAttack(notes);
+} else {
+  // Wait 100ms and retry (samples still loading)
+  setTimeout(() => { ... }, 100);
+}
+```
+
+**Why 100ms retry:**
+- Reduced from 500ms for faster playback
+- Handles edge case where samples aren't fully loaded yet
+- Provides better user experience on first chord
+
+---
+
 ## Styling Approach
 
 ### Tailwind CSS v4
@@ -720,19 +797,29 @@ export type Language = 'en' | 'fr' | 'es';
 
 3. Update UI strings in components
 
-### Adding Sound Playback
+### Sound Playback Implementation
 
-**Approach:**
-1. Add audio library (e.g., Tone.js)
-2. Create `AudioPlayer` utility
-3. Trigger on chord change:
+**Status:** ✅ Implemented with Tone.js
+
+**Implementation Details:**
+1. Real piano samples (Salamander Grand Piano)
+2. `utils/soundUtils.ts` handles audio playback
+3. Sound duration matches countdown timer setting
+4. Mobile browser support (iOS Safari audio context handling)
+5. Triggered on chord change:
 ```typescript
 useEffect(() => {
-  if (currentChord) {
-    playChord(currentChord.notes);
+  if (currentChord && playSound && isPlaying && !isPaused) {
+    playChord(currentChord.notes, countdownDuration);
   }
-}, [currentChord]);
+}, [chordChangeCount, playSound, countdownDuration]);
 ```
+
+**Key Features:**
+- Dynamic duration based on user settings
+- Audio context properly initialized for mobile browsers
+- Lazy-loaded samples for better performance
+- Immediate sound stopping on pause/stop
 
 ### Adding MIDI Input
 
@@ -787,10 +874,11 @@ const elapsed = Date.now() - startTime;
 | `Settings.tsx` | ~200 | Settings UI | Low |
 | `ChordSelector.tsx` | ~180 | Chord selection modal | Medium |
 | `chordUtils.ts` | ~70 | Utility functions | Low |
+| `soundUtils.ts` | ~175 | Piano sound playback | Medium |
 | `chords.ts` | ~200 | Chord data | None (data) |
 | `types.ts` | ~40 | TypeScript types | None (types) |
 
-**Total:** ~1,120 lines of code (excluding comments)
+**Total:** ~1,295 lines of code (excluding comments)
 
 ---
 

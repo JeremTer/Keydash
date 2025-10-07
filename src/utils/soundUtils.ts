@@ -89,8 +89,9 @@ const noteToToneFormat = (note: string): string => {
 /**
  * Play a chord given an array of note names
  * @param notes - Array of note names (e.g., ["C", "E", "G"])
+ * @param duration - Duration in seconds (default: 2)
  */
-export const playChord = async (notes: string[]) => {
+export const playChord = async (notes: string[], duration: number = 2) => {
   try {
     // Stop any currently playing notes first
     stopAllSounds();
@@ -98,11 +99,19 @@ export const playChord = async (notes: string[]) => {
     // Start Tone.js audio context (required for web audio)
     await Tone.start();
 
+    // Resume the audio context if suspended (critical for iOS Safari)
+    if (Tone.context.state === 'suspended') {
+      await Tone.context.resume();
+    }
+
     // Get the sampler (will wait for it to load if needed)
     const loadedSampler = await getSampler();
 
     // Convert note names to Tone.js format
     const toneNotes = notes.map(noteToToneFormat);
+
+    // Convert duration from seconds to milliseconds
+    const durationMs = duration * 1000;
 
     // Ensure sampler is loaded before playing
     if (loadedSampler.loaded) {
@@ -112,15 +121,16 @@ export const playChord = async (notes: string[]) => {
       // Use triggerAttack instead of triggerAttackRelease for better control
       loadedSampler.triggerAttack(toneNotes);
 
-      // Schedule release after 2 seconds
+      // Schedule release after specified duration
       setTimeout(() => {
         if (activeNotes.length > 0) {
           loadedSampler.triggerRelease(activeNotes);
           activeNotes = [];
         }
-      }, 2000);
+      }, durationMs);
     } else {
       // Sampler not fully loaded yet, wait and try again
+      console.warn('Sampler not loaded, retrying...');
       setTimeout(() => {
         if (loadedSampler.loaded) {
           activeNotes = [...toneNotes];
@@ -130,9 +140,9 @@ export const playChord = async (notes: string[]) => {
               loadedSampler.triggerRelease(activeNotes);
               activeNotes = [];
             }
-          }, 2000);
+          }, durationMs);
         }
-      }, 500);
+      }, 100); // Reduced delay from 500ms to 100ms
     }
   } catch (error) {
     console.error('Error playing chord:', error);
@@ -142,11 +152,22 @@ export const playChord = async (notes: string[]) => {
 /**
  * Preload the piano samples
  * Call this when the user starts the game to ensure samples are ready
+ * Ensures proper audio context initialization for mobile browsers
  */
 export const preloadSamples = async () => {
   try {
+    // Explicitly start the audio context (critical for mobile browsers)
     await Tone.start();
+
+    // Resume the audio context if it's suspended (iOS Safari requirement)
+    if (Tone.context.state === 'suspended') {
+      await Tone.context.resume();
+    }
+
+    // Load the sampler
     await getSampler();
+
+    console.log('Audio samples preloaded successfully, context state:', Tone.context.state);
   } catch (error) {
     console.error('Error preloading samples:', error);
   }

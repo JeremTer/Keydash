@@ -16,6 +16,8 @@ A beautiful, interactive piano chord practice application built with React, Type
   - Beautiful sound icon button to easily mute/unmute (speaker icon with sound waves)
   - Mobile-friendly large button with clear visual states (blue when on, gray when off)
   - Real piano samples (Salamander Grand Piano) using Tone.js
+  - **Sound duration matches your countdown timer** - hear the chord for the full duration
+  - **Mobile browser support** - works on iOS Safari and other mobile browsers
   - Sound stops immediately when pausing or stopping practice
   - Works correctly even when practicing a single chord repeatedly
 - **Bilingual Support**: Switch between English and French notation (C, D, E vs Do, Ré, Mi)
@@ -154,7 +156,7 @@ src/
 │   └── chords.ts          # Chord database (24 chords) and translations
 ├── utils/
 │   ├── chordUtils.ts      # Chord filtering and random selection logic
-│   └── soundUtils.ts      # Piano sound playback with Tone.js
+│   └── soundUtils.ts      # Piano sound playback with Tone.js (mobile-compatible)
 ├── types.ts               # TypeScript type definitions
 └── App.tsx                # Main application component with game logic
 ```
